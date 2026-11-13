@@ -1,0 +1,47 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Render dashboard → New → Blueprint → pick this repo. Creates the database and one web service
+# that serves both the website and the API (same origin, so login cookies work).
+
+databases:
+  - name: homecrew-db
+    plan: free # free Postgres expires after 30 days — upgrade before then to keep the data
+    region: frankfurt
+    databaseName: homecrew
+    user: homecrew
+
+services:
+  - type: web
+    name: homecrew
+    runtime: node
+    plan: free
+    region: frankfurt
+    # --include=dev: build tools (TypeScript, Vite, Prisma CLI, tsx) are devDependencies.
+    buildCommand: >-
+      npm ci --prefix backend --include=dev &&
+      npm ci --prefix frontend --include=dev &&
+      npm run build --prefix backend &&
+      npm run build --prefix frontend
+    # Apply migrations and the (idempotent) base seed on every start, then run the server.
+    startCommand: cd backend && npx prisma migrate deploy && npx prisma db seed && node dist/server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: SERVE_FRONTEND
+        value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: homecrew-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      # Test wallet "+500 ₾" button — set to false once real payments exist
+      - key: TEST_WALLET
+        value: "true"
+      # First admin account (created by the seed on the first start). Filled in by you in the dashboard.
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

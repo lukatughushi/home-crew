@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E6EAF0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#0B1F3A;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#047857;text-decoration:none}a:hover{color:#065F46;text-decoration:underline}
+button{font-family:inherit;cursor:pointer}input,textarea{font-family:inherit}
+input::placeholder,textarea::placeholder{color:#7A8799}
+</style>
+</helmet>
+
+<div style="background:#0B1F3A;color:#fff;padding:10px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+  <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:.02em">HomeCrew <span style="font-weight:500;color:#9FB0C8">UI spec · v1</span></div>
+  <div style="display:flex;gap:2px;flex-wrap:wrap;background:#152C50;padding:4px;border-radius:999px">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+      <button onClick="{{ t.onClick }}" style="border:0;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;background:{{ t.bg }};color:{{ t.fg }}">{{ t.label }}</button>
+    </sc-for>
+  </div>
+  <div style="display:flex;gap:2px;background:#152C50;padding:4px;border-radius:999px">
+    <sc-for list="{{ devices }}" as="d" hint-placeholder-count="2">
+      <button onClick="{{ d.onClick }}" style="border:0;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;background:{{ d.bg }};color:{{ d.fg }}">{{ d.label }}</button>
+    </sc-for>
+  </div>
+</div>
+
+<div style="padding:24px 12px 64px">
+<div ref="{{ frameRef }}" style="max-width:{{ frameMax }};margin:0 auto;background:#F4F6F9;border-radius:20px;overflow:clip;box-shadow:0 1px 2px rgba(11,31,58,.06),0 16px 48px rgba(11,31,58,.12);position:relative">
+
+<sc-if value="{{ notSpec }}" hint-placeholder-val="{{ true }}">
+<header style="position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid #E2E7EE">
+  <div style="max-width:1200px;margin:0 auto;padding:0 20px;height:68px;display:flex;align-items:center;gap:16px">
+    <button onClick="{{ goHome }}" style="border:0;background:none;padding:0;display:flex;align-items:center;gap:10px;color:#0B1F3A">
+      <span style="width:32px;height:32px;border-radius:9px;background:#0B1F3A;display:grid;place-items:center"><span style="width:12px;height:12px;border-radius:3px;background:#10B981;transform:rotate(45deg)"></span></span>
+      <span style="font-size:18px;font-weight:800;letter-spacing:-.02em">HomeCrew</span>
+    </button>
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ toggleMenu }}" style="border:0;background:#F4F6F9;border-radius:10px;padding:10px 14px;font-size:14px;font-weight:600;color:#0B1F3A;display:flex;align-items:center;gap:8px">Categories <span style="font-size:10px;color:#5A6A80">▼</span></button>
+      <div style="flex:1;max-width:420px;display:flex;align-items:center;gap:10px;border:1px solid #E2E7EE;border-radius:999px;padding:0 16px;height:42px;background:#fff">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5A6A80" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <input value="{{ query }}" onChange="{{ onQuery }}" onKeyDown="{{ onKey }}" placeholder="Search services" style="border:0;outline:0;flex:1;font-size:14px;color:#0B1F3A;background:transparent;min-width:0">
+      </div>
+      <div style="flex:1"></div>
+      <a href="#" style="font-size:14px;font-weight:600;color:#0B1F3A">Become a pro</a>
+      <button style="border:1px solid #CBD3DE;background:#fff;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;color:#0B1F3A">Sign in</button>
+      <button aria-label="Account" onClick="{{ goAccount }}" style="width:40px;height:40px;border-radius:50%;border:0;background:#E7F6EF;color:#047857;font-weight:700;font-size:14px">JD</button>
+    </sc-if>
+    <sc-if value="{{ narrow }}">
+      <div style="flex:1"></div>
+      <button aria-label="Search" onClick="{{ goHome }}" style="width:44px;height:44px;border-radius:12px;border:0;background:#F4F6F9;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B1F3A" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></button>
+      <button aria-label="Menu" onClick="{{ toggleMenu }}" style="width:44px;height:44px;border-radius:12px;border:0;background:#0B1F3A;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+    </sc-if>
+  </div>
+  <sc-if value="{{ menu }}">
+    <div style="border-top:1px solid #E2E7EE;background:#fff;box-shadow:0 16px 32px rgba(11,31,58,.10)">
+      <div style="max-width:1200px;margin:0 auto;padding:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px">
+        <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+          <button onClick="{{ c.open }}" style="border:0;background:#fff;border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px;text-align:left;color:#0B1F3A" style-hover="background:#F4F6F9">
+            <span style="width:40px;height:40px;border-radius:10px;background:#E7F6EF;display:grid;place-items:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="{{ c.icon }}"></path></svg></span>
+            <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:700">{{ c.name }}</span><span style="font-size:12px;color:#5A6A80">{{ c.fromLabel }}</span></span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+</header>
+</sc-if>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <section style="background:#0B1F3A;color:#fff">
+    <div style="max-width:1200px;margin:0 auto;padding:56px 20px 64px;display:flex;flex-wrap:wrap;gap:48px;align-items:center;justify-content:center">
+      <div style="flex:1 1 460px;min-width:0;max-width:640px;display:flex;flex-direction:column;gap:22px;align-items:{{ heroAlign }};text-align:{{ heroText }}">
+        <span style="display:inline-flex;align-items:center;gap:8px;background:#152C50;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;color:#C9D4E3"><span style="width:8px;height:8px;border-radius:50%;background:#10B981"></span>Same-day slots available in your area</span>
+        <h1 style="margin:0;font-size:clamp(34px,5vw,56px);line-height:1.05;letter-spacing:-.03em;font-weight:800;text-wrap:balance">Trusted pros for every corner of your home.</h1>
+        <p style="margin:0;font-size:18px;line-height:1.55;color:#C9D4E3;max-width:520px;text-wrap:pretty">Cleaning, gardening, electrical, renovation and more — vetted, insured and priced upfront.</p>
+        <div style="position:relative;width:100%;max-width:600px">
+          <div style="background:#fff;border-radius:16px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;box-shadow:0 12px 32px rgba(0,0,0,.25)">
+            <div style="flex:1 1 240px;display:flex;align-items:center;gap:10px;padding:0 12px;min-height:52px">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+              <input value="{{ query }}" onChange="{{ onQuery }}" onFocus="{{ onFocus }}" onBlur="{{ onBlur }}" onKeyDown="{{ onKey }}" placeholder="What service do you need today?" style="border:0;outline:0;flex:1;min-width:0;font-size:16px;color:#0B1F3A;background:transparent">
+            </div>
+            <div style="flex:0 1 150px;display:flex;align-items:center;gap:8px;padding:0 12px;min-height:52px;border-left:1px solid #E2E7EE">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5A6A80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0119 9.5C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.5"></circle></svg>
+              <input placeholder="Postcode" style="border:0;outline:0;width:100%;font-size:15px;color:#0B1F3A;background:transparent">
+            </div>
+            <button onClick="{{ doSearch }}" style="flex:1 0 auto;border:0;border-radius:12px;background:#047857;color:#fff;font-size:16px;font-weight:700;padding:0 24px;min-height:52px" style-hover="background:#065F46">Search</button>
+          </div>
+          <sc-if value="{{ showSugg }}">
+            <div style="position:absolute;left:0;right:0;top:calc(100% + 8px);background:#fff;border-radius:14px;box-shadow:0 16px 40px rgba(11,31,58,.25);padding:8px;z-index:10;text-align:left">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5A6A80;padding:8px 12px">Services</div>
+              <sc-for list="{{ sugg }}" as="g" hint-placeholder-count="3">
+                <button onMouseDown="{{ g.open }}" style="width:100%;border:0;background:#fff;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:12px;text-align:left;color:#0B1F3A" style-hover="background:#F4F6F9">
+                  <span style="width:36px;height:36px;border-radius:9px;background:#E7F6EF;display:grid;place-items:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="{{ g.icon }}"></path></svg></span>
+                  <span style="flex:1;font-size:15px;font-weight:600">{{ g.service }}</span>
+                  <span style="font-size:13px;color:#5A6A80">{{ g.fromLabel }}</span>
+                </button>
+              </sc-for>
+              <sc-if value="{{ noSugg }}"><div style="padding:12px;font-size:14px;color:#5A6A80">No exact match — press Search and we'll suggest the closest pros.</div></sc-if>
+            </div>
+          </sc-if>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:{{ heroAlign }}">
+          <span style="font-size:13px;color:#9FB0C8">Popular:</span>
+          <sc-for list="{{ popular }}" as="p" hint-placeholder-count="3">
+            <button onClick="{{ p.open }}" style="border:1px solid #2A4470;background:transparent;color:#fff;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600" style-hover="border-color:#10B981">{{ p.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:{{ heroAlign }}">
+          <button onClick="{{ quickBook }}" style="border:0;border-radius:12px;background:#10B981;color:#0B1F3A;font-size:15px;font-weight:800;padding:14px 20px;display:flex;align-items:center;gap:8px" style-hover="background:#34D399">Quick book in 60 seconds <span>→</span></button>
+          <span style="font-size:14px;color:#C9D4E3"><span style="color:#FBBF24">★★★★★</span> 4.8 from 38k reviews</span>
+        </div>
+      </div>
+      <sc-if value="{{ heroImg }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1 1 360px;max-width:460px;position:relative">
+          <div style="aspect-ratio:4/5;border-radius:24px;background:repeating-linear-gradient(135deg,#1A3358 0 12px,#152C50 12px 24px);display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#9FB0C8">photo: pro at work in a home</div>
+          <div style="position:absolute;left:-28px;bottom:40px;background:#fff;color:#0B1F3A;border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 16px 40px rgba(0,0,0,.3)">
+            <span style="width:40px;height:40px;border-radius:50%;background:#E7F6EF;color:#047857;display:grid;place-items:center;font-weight:800;font-size:14px">MA</span>
+            <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:700">Maria is on her way</span><span style="font-size:13px;color:#5A6A80">Deep clean · arriving 10:30</span></span>
+          </div>
+          <div style="position:absolute;right:-16px;top:32px;background:#fff;color:#0B1F3A;border-radius:14px;padding:10px 14px;display:flex;gap:8px;align-items:center;box-shadow:0 16px 40px rgba(0,0,0,.3);font-size:13px;font-weight:700"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg>ID & insurance verified</div>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+
+  <section style="max-width:1200px;margin:0 auto;padding:64px 20px">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between;margin-bottom:24px">
+      <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#047857">Services</span><h2 style="margin:0;font-size:clamp(26px,3.2vw,36px);letter-spacing:-.02em;font-weight:800">What can we help with?</h2></div>
+      <a href="#" style="font-size:15px;font-weight:700">All services →</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px">
+      <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+        <button onClick="{{ c.open }}" style="border:1px solid #E2E7EE;background:#fff;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;text-align:left;color:#0B1F3A;min-height:168px;transition:border-color .15s,box-shadow .15s" style-hover="border-color:#047857;box-shadow:0 8px 24px rgba(11,31,58,.08)">
+          <span style="width:52px;height:52px;border-radius:14px;background:#E7F6EF;display:grid;place-items:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="{{ c.icon }}"></path></svg></span>
+          <span style="display:flex;flex-direction:column;gap:4px;margin-top:auto"><span style="font-size:16px;font-weight:700;line-height:1.25">{{ c.name }}</span><span style="font-size:13px;color:#5A6A80">{{ c.tileSub }}</span></span>
+        </button>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="background:#fff;border-top:1px solid #E2E7EE;border-bottom:1px solid #E2E7EE">
+    <div style="max-width:1200px;margin:0 auto;padding:64px 20px">
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:32px;max-width:560px"><span style="font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#047857">How it works</span><h2 style="margin:0;font-size:clamp(26px,3.2vw,36px);letter-spacing:-.02em;font-weight:800">Booked in minutes, done right.</h2></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+        <sc-for list="{{ steps }}" as="st" hint-placeholder-count="3">
+          <div style="background:#F4F6F9;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span style="width:56px;height:56px;border-radius:16px;background:#0B1F3A;display:grid;place-items:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="{{ st.icon }}"></path></svg></span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;color:#5A6A80">{{ st.n }}</span>
+            </div>
+            <h3 style="margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em">{{ st.title }}</h3>
+            <p style="margin:0;font-size:15px;line-height:1.6;color:#5A6A80;text-wrap:pretty">{{ st.text }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#0B1F3A;color:#fff">
+    <div style="max-width:1200px;margin:0 auto;padding:64px 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:32px">
+      <sc-for list="{{ trust }}" as="b" hint-placeholder-count="3">
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <span style="width:52px;height:52px;border-radius:50%;border:1.5px solid #10B981;display:grid;place-items:center;flex-shrink:0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="{{ b.icon }}"></path></svg></span>
+          <div style="display:flex;flex-direction:column;gap:6px"><h3 style="margin:0;font-size:18px;font-weight:700">{{ b.title }}</h3><p style="margin:0;font-size:15px;line-height:1.6;color:#C9D4E3;text-wrap:pretty">{{ b.text }}</p></div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="max-width:1200px;margin:0 auto;padding:64px 20px">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between;margin-bottom:24px">
+      <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#047857">Reviews</span><h2 style="margin:0;font-size:clamp(26px,3.2vw,36px);letter-spacing:-.02em;font-weight:800">Homeowners, in their words.</h2></div>
+      <div style="display:flex;gap:8px">
+        <button aria-label="Previous" onClick="{{ tPrev }}" style="width:48px;height:48px;border-radius:50%;border:1px solid #CBD3DE;background:#fff;font-size:18px;color:#0B1F3A">←</button>
+        <button aria-label="Next" onClick="{{ tNext }}" style="width:48px;height:48px;border-radius:50%;border:0;background:#0B1F3A;font-size:18px;color:#fff">→</button>
+      </div>
+    </div>
+    <div style="overflow:hidden">
+      <div style="display:flex;gap:16px;transition:transform .45s cubic-bezier(.2,.8,.2,1);transform:{{ tTransform }}">
+        <sc-for list="{{ testimonials }}" as="r" hint-placeholder-count="2">
+          <figure style="margin:0;flex:0 0 {{ tBasis }};background:#fff;border:1px solid #E2E7EE;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:18px">
+            <span style="color:#F59E0B;font-size:16px;letter-spacing:2px">★★★★★</span>
+            <blockquote style="margin:0;font-size:18px;line-height:1.55;font-weight:500;text-wrap:pretty">“{{ r.quote }}”</blockquote>
+            <figcaption style="display:flex;align-items:center;gap:12px;margin-top:auto">
+              <span style="width:44px;height:44px;border-radius:50%;background:#E7F6EF;color:#047857;display:grid;place-items:center;font-weight:800;font-size:14px">{{ r.initials }}</span>
+              <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:700">{{ r.name }}</span><span style="font-size:13px;color:#5A6A80">{{ r.meta }}</span></span>
+            </figcaption>
+          </figure>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;justify-content:center;margin-top:24px">
+      <sc-for list="{{ tDots }}" as="d" hint-placeholder-count="4">
+        <button aria-label="Go to review" onClick="{{ d.onClick }}" style="border:0;height:8px;border-radius:999px;padding:0;width:{{ d.w }};background:{{ d.bg }};transition:all .2s"></button>
+      </sc-for>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isService }}">
+  <div style="max-width:1200px;margin:0 auto;padding:20px 20px 64px">
+    <nav style="display:flex;gap:8px;font-size:13px;color:#5A6A80;margin-bottom:16px;flex-wrap:wrap"><a href="#" onClick="{{ goHomeLink }}">Home</a><span>/</span><span>{{ cat.name }}</span><span>/</span><span style="color:#0B1F3A;font-weight:600">{{ cat.service }}</span></nav>
+    <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+      <main style="flex:1 1 560px;min-width:0;display:flex;flex-direction:column;gap:32px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
+          <div style="height:300px;border-radius:20px;background:repeating-linear-gradient(135deg,#E3E8EF 0 12px,#EDF1F5 12px 24px);display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#5A6A80;grid-column:span 2"><span>photo: {{ cat.photo }}</span></div>
+          <sc-if value="{{ wide }}">
+            <div style="display:grid;gap:8px"><div style="border-radius:16px;background:repeating-linear-gradient(135deg,#E3E8EF 0 12px,#EDF1F5 12px 24px);display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#5A6A80">before</div><div style="border-radius:16px;background:repeating-linear-gradient(135deg,#E3E8EF 0 12px,#EDF1F5 12px 24px);display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#5A6A80">after</div></div>
+          </sc-if>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="align-self:flex-start;background:#E7F6EF;color:#047857;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700">{{ cat.name }}</span>
+          <h1 style="margin:0;font-size:clamp(28px,4vw,40px);letter-spacing:-.025em;font-weight:800;line-height:1.1">{{ cat.service }}</h1>
+          <div style="display:flex;flex-wrap:wrap;gap:8px 16px;font-size:14px;color:#5A6A80;align-items:center"><span style="color:#0B1F3A;font-weight:700"><span style="color:#F59E0B">★</span> {{ cat.rating }}</span><span>{{ cat.reviews }} reviews</span><span>·</span><span>{{ cat.pros }} verified pros nearby</span></div>
+          <p style="margin:0;font-size:16px;line-height:1.65;color:#33445C;max-width:640px;text-wrap:pretty">{{ cat.desc }}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+            <sc-for list="{{ trust }}" as="b" hint-placeholder-count="3">
+              <span style="display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #E2E7EE;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="{{ b.icon }}"></path></svg>{{ b.title }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <section style="display:flex;flex-direction:column;gap:14px">
+          <h2 style="margin:0;font-size:22px;font-weight:800;letter-spacing:-.01em">Choose a package</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+            <sc-for list="{{ pkgs }}" as="p" hint-placeholder-count="3">
+              <button onClick="{{ p.pick }}" style="border:2px solid {{ p.bd }};background:{{ p.bg }};border-radius:16px;padding:18px;text-align:left;display:flex;flex-direction:column;gap:8px;color:#0B1F3A;position:relative">
+                <span style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:16px;font-weight:700">{{ p.n }}</span><span style="width:20px;height:20px;border-radius:50%;border:2px solid {{ p.bd }};display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:{{ p.dot }}"></span></span></span>
+                <span style="font-size:24px;font-weight:800;letter-spacing:-.02em">{{ p.price }}</span>
+                <span style="font-size:13px;line-height:1.5;color:#5A6A80">{{ p.d }}</span>
+                <sc-if value="{{ p.popular }}"><span style="position:absolute;top:-11px;right:14px;background:#0B1F3A;color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:4px 10px">Most booked</span></sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </section>
+        <section style="background:#fff;border:1px solid #E2E7EE;border-radius:20px;padding:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px">
+          <div style="display:flex;flex-direction:column;gap:12px"><h3 style="margin:0;font-size:17px;font-weight:700">What's included</h3>
+            <sc-for list="{{ cat.included }}" as="i" hint-placeholder-count="4"><div style="display:flex;gap:10px;font-size:15px;line-height:1.45"><span style="color:#047857;font-weight:800">✓</span>{{ i }}</div></sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px"><h3 style="margin:0;font-size:17px;font-weight:700">Not included</h3>
+            <sc-for list="{{ cat.excluded }}" as="i" hint-placeholder-count="2"><div style="display:flex;gap:10px;font-size:15px;line-height:1.45;color:#5A6A80"><span style="font-weight:800">–</span>{{ i }}</div></sc-for>
+            <p style="margin:8px 0 0;font-size:13px;line-height:1.5;color:#5A6A80">Extras are quoted in-app and need your approval before work starts.</p>
+          </div>
+        </section>
+        <section style="display:flex;flex-direction:column;gap:14px">
+          <h2 style="margin:0;font-size:22px;font-weight:800;letter-spacing:-.01em">Top-rated pros near you</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+            <sc-for list="{{ pros }}" as="p" hint-placeholder-count="3">
+              <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;gap:12px;align-items:center"><span style="width:48px;height:48px;border-radius:50%;background:#0B1F3A;color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px">{{ p.initials }}</span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:700">{{ p.name }}</span><span style="font-size:13px;color:#5A6A80"><span style="color:#F59E0B">★</span> {{ p.rating }} · {{ p.jobs }} jobs</span></span></div>
+                <span style="align-self:flex-start;background:#E7F6EF;color:#047857;border-radius:6px;padding:4px 8px;font-size:12px;font-weight:700">{{ p.tag }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+        <section style="display:flex;flex-direction:column;gap:8px">
+          <h2 style="margin:0 0 6px;font-size:22px;font-weight:800;letter-spacing:-.01em">Questions</h2>
+          <sc-for list="{{ faqs }}" as="f" hint-placeholder-count="3">
+            <div style="background:#fff;border:1px solid #E2E7EE;border-radius:14px">
+              <button onClick="{{ f.toggle }}" style="width:100%;border:0;background:none;padding:18px 20px;display:flex;justify-content:space-between;gap:16px;align-items:center;text-align:left;font-size:15px;font-weight:700;color:#0B1F3A;min-height:56px">{{ f.q }}<span style="font-size:20px;color:#047857;font-weight:500">{{ f.sign }}</span></button>
+              <sc-if value="{{ f.open }}"><p style="margin:0;padding:0 20px 18px;font-size:15px;line-height:1.6;color:#5A6A80">{{ f.a }}</p></sc-if>
+            </div>
+          </sc-for>
+        </section>
+      </main>
+      <aside style="flex:1 1 320px;max-width:400px;position:sticky;top:88px;align-self:flex-start;background:#fff;border:1px solid #E2E7EE;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:0 8px 32px rgba(11,31,58,.06)">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:15px;font-weight:700">{{ pkg.n }}</span><span style="font-size:28px;font-weight:800;letter-spacing:-.02em">{{ pkgPrice }}</span></div>
+        <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:13px;font-weight:700;color:#5A6A80">Date</span>
+          <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px">
+            <sc-for list="{{ days }}" as="d" hint-placeholder-count="6"><button onClick="{{ d.pick }}" style="border:1.5px solid {{ d.bd }};background:{{ d.bg }};color:{{ d.fg }};border-radius:12px;padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:56px"><span style="font-size:11px;font-weight:600">{{ d.dow }}</span><span style="font-size:17px;font-weight:800">{{ d.num }}</span></button></sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:13px;font-weight:700;color:#5A6A80">Arrival window</span>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
+            <sc-for list="{{ slots }}" as="t" hint-placeholder-count="6"><button onClick="{{ t.pick }}" disabled="{{ t.off }}" style="border:1.5px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};border-radius:10px;min-height:44px;font-size:14px;font-weight:700;text-decoration:{{ t.deco }}">{{ t.label }}</button></sc-for>
+          </div>
+        </div>
+        <div style="border-top:1px dashed #CBD3DE;padding-top:16px;display:flex;flex-direction:column;gap:8px;font-size:14px">
+          <div style="display:flex;justify-content:space-between;color:#5A6A80"><span>{{ pkg.n }} package</span><span>{{ pkgPrice }}</span></div>
+          <div style="display:flex;justify-content:space-between;color:#5A6A80"><span>Booking & insurance fee</span><span>$3.50</span></div>
+          <div style="display:flex;justify-content:space-between;font-weight:800;font-size:16px;margin-top:4px"><span>Total</span><span>{{ total }}</span></div>
+        </div>
+        <button onClick="{{ startBooking }}" style="border:0;border-radius:12px;background:#047857;color:#fff;font-size:16px;font-weight:800;min-height:54px" style-hover="background:#065F46">{{ bookLabel }}</button>
+        <p style="margin:0;font-size:13px;line-height:1.5;color:#5A6A80;text-align:center">No charge until the job is done · Free cancellation up to 24h before</p>
+      </aside>
+    </div>
+  </div>
+  <sc-if value="{{ narrow }}">
+    <div style="position:sticky;bottom:0;z-index:20;background:#fff;border-top:1px solid #E2E7EE;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 -8px 24px rgba(11,31,58,.08)">
+      <span style="display:flex;flex-direction:column;flex:1"><span style="font-size:12px;color:#5A6A80">{{ pkg.n }}</span><span style="font-size:20px;font-weight:800">{{ total }}</span></span>
+      <button onClick="{{ startBooking }}" style="border:0;border-radius:12px;background:#047857;color:#fff;font-size:16px;font-weight:800;min-height:50px;padding:0 24px">Book now</button>
+    </div>
+  </sc-if>
+</sc-if>
+
+<sc-if value="{{ isBook }}">
+  <div style="max-width:1100px;margin:0 auto;padding:24px 20px 64px;display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:center;gap:6px;overflow-x:auto;padding-bottom:4px">
+      <sc-for list="{{ stepper }}" as="s" hint-placeholder-count="5">
+        <div style="display:flex;align-items:center;gap:8px;flex:1 0 auto">
+          <span style="width:30px;height:30px;border-radius:50%;background:{{ s.bg }};color:{{ s.fg }};border:1.5px solid {{ s.bd }};display:grid;place-items:center;font-size:13px;font-weight:800;flex-shrink:0">{{ s.mark }}</span>
+          <span style="font-size:14px;font-weight:700;color:{{ s.lc }};white-space:nowrap">{{ s.label }}</span>
+          <span style="flex:1;min-width:16px;height:2px;background:{{ s.line }};border-radius:2px"></span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+      <div style="flex:1 1 520px;min-width:0;background:#fff;border:1px solid #E2E7EE;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:24px">
+        <sc-if value="{{ s1 }}">
+          <div style="display:flex;flex-direction:column;gap:6px"><h2 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em">Where's the job?</h2><p style="margin:0;font-size:15px;color:#5A6A80">We only show pros who cover your area.</p></div>
+          <label style="display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:700">Address<input value="{{ address }}" onChange="{{ onAddress }}" placeholder="Street address and postcode" style="border:1.5px solid #CBD3DE;border-radius:12px;padding:0 14px;min-height:52px;font-size:16px;color:#0B1F3A;outline-color:#047857"></label>
+          <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:700">Property type</span>
+            <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ propTypes }}" as="p" hint-placeholder-count="3"><button onClick="{{ p.pick }}" style="border:1.5px solid {{ p.bd }};background:{{ p.bg }};color:#0B1F3A;border-radius:999px;padding:0 18px;min-height:44px;font-size:14px;font-weight:700">{{ p.label }}</button></sc-for></div>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:700">Notes for your pro <span style="font-weight:500;color:#5A6A80;font-size:13px">Optional — access, parking, pets</span><textarea rows="3" placeholder="e.g. Key under the mat, friendly dog" style="border:1.5px solid #CBD3DE;border-radius:12px;padding:12px 14px;font-size:15px;color:#0B1F3A;resize:vertical;outline-color:#047857"></textarea></label>
+        </sc-if>
+        <sc-if value="{{ s2 }}">
+          <div style="display:flex;flex-direction:column;gap:6px"><h2 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em">When suits you?</h2><p style="margin:0;font-size:15px;color:#5A6A80">Pick an arrival window — your pro confirms within 15 minutes.</p></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px">
+            <sc-for list="{{ days }}" as="d" hint-placeholder-count="6"><button onClick="{{ d.pick }}" style="border:1.5px solid {{ d.bd }};background:{{ d.bg }};color:{{ d.fg }};border-radius:14px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:64px"><span style="font-size:12px;font-weight:600">{{ d.dow }}</span><span style="font-size:20px;font-weight:800">{{ d.num }}</span></button></sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px">
+            <sc-for list="{{ slots }}" as="t" hint-placeholder-count="6"><button onClick="{{ t.pick }}" disabled="{{ t.off }}" style="border:1.5px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};border-radius:12px;min-height:52px;font-size:15px;font-weight:700;text-decoration:{{ t.deco }}">{{ t.range }}</button></sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ s3 }}">
+          <div style="display:flex;flex-direction:column;gap:6px"><h2 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em">Choose your pro</h2><p style="margin:0;font-size:15px;color:#5A6A80">Same price whoever you pick. All are ID-checked and insured.</p></div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ proOpts }}" as="p" hint-placeholder-count="4">
+              <button onClick="{{ p.pick }}" style="border:1.5px solid {{ p.bd }};background:{{ p.bg }};border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;text-align:left;color:#0B1F3A;min-height:68px">
+                <span style="width:44px;height:44px;border-radius:50%;background:{{ p.av }};color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;flex-shrink:0">{{ p.initials }}</span>
+                <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:700">{{ p.name }}</span><span style="font-size:13px;color:#5A6A80">{{ p.sub }}</span></span>
+                <span style="width:22px;height:22px;border-radius:50%;border:2px solid {{ p.bd }};display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:{{ p.dot }}"></span></span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ s4 }}">
+          <div style="display:flex;flex-direction:column;gap:6px"><h2 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em">Review & pay</h2><p style="margin:0;font-size:15px;color:#5A6A80">We hold the amount now and only charge once you mark the job complete.</p></div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ payOpts }}" as="p" hint-placeholder-count="3">
+              <button onClick="{{ p.pick }}" style="border:1.5px solid {{ p.bd }};background:{{ p.bg }};border-radius:14px;padding:0 16px;min-height:60px;display:flex;align-items:center;gap:14px;text-align:left;color:#0B1F3A">
+                <span style="width:22px;height:22px;border-radius:50%;border:2px solid {{ p.bd }};display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:{{ p.dot }}"></span></span>
+                <span style="flex:1;font-size:15px;font-weight:700">{{ p.label }}</span><span style="font-size:13px;color:#5A6A80">{{ p.sub }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="background:#E7F6EF;border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;font-size:14px;line-height:1.5;color:#064E3B"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style="flex-shrink:0;margin-top:1px"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg><span><strong>Satisfaction Guarantee.</strong> Not happy? We'll send a pro back free, or refund you.</span></div>
+        </sc-if>
+        <sc-if value="{{ s5 }}">
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:16px 0">
+            <span style="width:72px;height:72px;border-radius:50%;background:#047857;display:grid;place-items:center"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+            <h2 style="margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em">You're booked</h2>
+            <p style="margin:0;font-size:16px;line-height:1.55;color:#5A6A80;max-width:420px">{{ confirmLine }}</p>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:13px;background:#F4F6F9;border-radius:8px;padding:6px 10px">Ref HC-48219</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0;border-top:1px solid #E2E7EE;padding-top:20px">
+            <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+              <div style="display:flex;gap:14px"><div style="display:flex;flex-direction:column;align-items:center"><span style="width:12px;height:12px;border-radius:50%;background:{{ t.c }};margin-top:4px"></span><span style="flex:1;width:2px;background:#E2E7EE;min-height:24px"></span></div><div style="padding-bottom:16px;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:700">{{ t.title }}</span><span style="font-size:13px;color:#5A6A80">{{ t.sub }}</span></div></div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;border-top:1px solid #E2E7EE;padding-top:20px">
+          <button onClick="{{ back }}" style="border:1px solid #CBD3DE;background:#fff;border-radius:12px;padding:0 20px;min-height:50px;font-size:15px;font-weight:700;color:#0B1F3A">{{ backLabel }}</button>
+          <button onClick="{{ next }}" disabled="{{ cantNext }}" style="border:0;border-radius:12px;background:{{ nextBg }};color:#fff;padding:0 24px;min-height:50px;font-size:15px;font-weight:800;flex:1 1 200px;max-width:320px;cursor:{{ nextCursor }}">{{ nextLabel }}</button>
+        </div>
+      </div>
+      <aside style="flex:1 1 300px;max-width:380px;background:#fff;border:1px solid #E2E7EE;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px;position:sticky;top:88px">
+        <div style="display:flex;gap:12px;align-items:center"><span style="width:44px;height:44px;border-radius:12px;background:#E7F6EF;display:grid;place-items:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="{{ cat.icon }}"></path></svg></span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:800">{{ cat.service }}</span><span style="font-size:13px;color:#5A6A80">{{ pkg.n }} · {{ pkg.d }}</span></span></div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;border-top:1px solid #E2E7EE;padding-top:16px">
+          <sc-for list="{{ summary }}" as="r" hint-placeholder-count="4"><div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#5A6A80">{{ r.k }}</span><span style="font-weight:600;text-align:right;color:{{ r.c }}">{{ r.v }}</span></div></sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;border-top:1px dashed #CBD3DE;padding-top:16px">
+          <div style="display:flex;justify-content:space-between;color:#5A6A80"><span>Package</span><span>{{ pkgPrice }}</span></div>
+          <div style="display:flex;justify-content:space-between;color:#5A6A80"><span>Booking & insurance fee</span><span>$3.50</span></div>
+          <div style="display:flex;justify-content:space-between;font-weight:800;font-size:17px"><span>Total</span><span>{{ total }}</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isAccount }}">
+  <div style="max-width:1200px;margin:0 auto;padding:28px 20px 64px;display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+      <div style="display:flex;gap:16px;align-items:center">
+        <span style="width:60px;height:60px;border-radius:50%;background:#0B1F3A;color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px;flex-shrink:0">JD</span>
+        <div style="display:flex;flex-direction:column;gap:2px"><h1 style="margin:0;font-size:clamp(24px,3vw,30px);font-weight:800;letter-spacing:-.02em">Hi, Jana</h1><span style="font-size:14px;color:#5A6A80">jana.d@email.com · Member since 2024</span></div>
+      </div>
+      <button onClick="{{ quickBook }}" style="border:0;border-radius:12px;background:#047857;color:#fff;font-size:15px;font-weight:800;padding:0 20px;min-height:48px" style-hover="background:#065F46">+ New booking</button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+      <nav style="flex:1 1 220px;max-width:{{ navMax }};display:flex;flex-direction:{{ navDir }};gap:4px;overflow-x:auto;background:#fff;border:1px solid #E2E7EE;border-radius:16px;padding:8px">
+        <sc-for list="{{ acctNav }}" as="n" hint-placeholder-count="5">
+          <button onClick="{{ n.pick }}" style="border:0;border-radius:10px;background:{{ n.bg }};color:{{ n.fg }};padding:0 14px;min-height:44px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;text-align:left;white-space:nowrap;flex-shrink:0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="{{ n.icon }}"></path></svg>
+            <span style="flex:1">{{ n.label }}</span>
+            <sc-if value="{{ n.badge }}"><span style="background:#10B981;color:#0B1F3A;border-radius:999px;font-size:11px;font-weight:800;padding:2px 8px">{{ n.badge }}</span></sc-if>
+          </button>
+        </sc-for>
+      </nav>
+      <div style="flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:16px">
+
+        <sc-if value="{{ aBookings }}">
+          <div style="display:flex;gap:4px;background:#E2E7EE;border-radius:12px;padding:4px;align-self:flex-start">
+            <sc-for list="{{ bkFilters }}" as="f" hint-placeholder-count="2"><button onClick="{{ f.pick }}" style="border:0;border-radius:9px;background:{{ f.bg }};color:#0B1F3A;padding:0 16px;min-height:40px;font-size:14px;font-weight:700;box-shadow:{{ f.sh }}">{{ f.label }}</button></sc-for>
+          </div>
+          <sc-if value="{{ showUpcoming }}">
+            <div style="background:#fff;border:1px solid #E2E7EE;border-radius:20px;overflow:hidden">
+              <div style="background:#0B1F3A;color:#fff;padding:20px 24px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+                <div style="display:flex;flex-direction:column;gap:4px"><span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#10B981"><span style="width:8px;height:8px;border-radius:50%;background:#10B981"></span>Pro on the way · ETA 12 min</span><span style="font-size:20px;font-weight:800">Deep Home Cleaning</span><span style="font-size:14px;color:#C9D4E3">Today · 10:00–12:00 · 14 Elm Street, NW1</span></div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#9FB0C8">HC-48219</span>
+              </div>
+              <div style="padding:20px 24px;display:flex;flex-direction:column;gap:20px">
+                <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">
+                  <sc-for list="{{ trackSteps }}" as="t" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:8px"><span style="height:6px;border-radius:999px;background:{{ t.c }}"></span><span style="font-size:12px;font-weight:700;color:{{ t.lc }}">{{ t.label }}</span></div></sc-for>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+                  <div style="display:flex;gap:12px;align-items:center"><span style="width:48px;height:48px;border-radius:50%;background:#E7F6EF;color:#047857;display:grid;place-items:center;font-weight:800">MA</span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:700">Maria Alves</span><span style="font-size:13px;color:#5A6A80"><span style="color:#F59E0B">★</span> 4.97 · Verified · Standard package</span></span></div>
+                  <div style="display:flex;flex-wrap:wrap;gap:8px">
+                    <button style="border:0;border-radius:10px;background:#047857;color:#fff;padding:0 16px;min-height:44px;font-size:14px;font-weight:700">Message</button>
+                    <button style="border:1px solid #CBD3DE;border-radius:10px;background:#fff;color:#0B1F3A;padding:0 16px;min-height:44px;font-size:14px;font-weight:700">Reschedule</button>
+                    <button style="border:0;background:none;color:#B42318;padding:0 8px;min-height:44px;font-size:14px;font-weight:700">Cancel</button>
+                  </div>
+                </div>
+                <div style="background:#F4F6F9;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;color:#33445C;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><span><strong>$122.50</strong> held on Visa •••• 4242 — charged after you approve the job.</span><a href="#">View receipt</a></div>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;padding:16px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+              <span style="width:44px;height:44px;border-radius:12px;background:#E7F6EF;display:grid;place-items:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21V11M12 11C12 7 9 4 4 4c0 4 3 7 8 7zM12 13c0-3 2.5-6 7-6 0 4-3 6-7 6z"></path></svg></span>
+              <span style="flex:1 1 200px;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:700">Garden Maintenance · Seasonal</span><span style="font-size:13px;color:#5A6A80">Thu 12 Nov · 14:00–16:00 · Repeats every 2 weeks</span></span>
+              <span style="background:#E7F6EF;color:#047857;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700">Confirmed</span>
+              <button style="border:1px solid #CBD3DE;border-radius:10px;background:#fff;color:#0B1F3A;padding:0 14px;min-height:44px;font-size:14px;font-weight:700">Manage</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ showPast }}">
+            <sc-for list="{{ pastBookings }}" as="b" hint-placeholder-count="3">
+              <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;padding:16px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+                <span style="width:44px;height:44px;border-radius:12px;background:#F4F6F9;display:grid;place-items:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B1F3A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="{{ b.icon }}"></path></svg></span>
+                <span style="flex:1 1 200px;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:700">{{ b.service }}</span><span style="font-size:13px;color:#5A6A80">{{ b.meta }}</span></span>
+                <span style="font-size:15px;font-weight:800">{{ b.price }}</span>
+                <sc-if value="{{ b.rated }}"><span style="color:#F59E0B;font-size:14px;letter-spacing:1px">★★★★★</span></sc-if>
+                <sc-if value="{{ b.unrated }}"><button onClick="{{ b.rate }}" style="border:1.5px solid #F59E0B;border-radius:10px;background:#FFFBEB;color:#92400E;padding:0 14px;min-height:44px;font-size:14px;font-weight:700">Rate job</button></sc-if>
+                <button onClick="{{ b.again }}" style="border:0;border-radius:10px;background:#0B1F3A;color:#fff;padding:0 14px;min-height:44px;font-size:14px;font-weight:700">Book again</button>
+              </div>
+            </sc-for>
+          </sc-if>
+        </sc-if>
+
+        <sc-if value="{{ aAddresses }}">
+          <h2 style="margin:0;font-size:22px;font-weight:800">Saved addresses</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px">
+            <sc-for list="{{ addresses }}" as="a" hint-placeholder-count="2">
+              <div style="background:#fff;border:1.5px solid {{ a.bd }};border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:15px;font-weight:800">{{ a.label }}</span><sc-if value="{{ a.isDefault }}"><span style="background:#E7F6EF;color:#047857;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700">Default</span></sc-if></div>
+                <span style="font-size:14px;line-height:1.5;color:#33445C">{{ a.line }}</span>
+                <span style="font-size:13px;color:#5A6A80">{{ a.note }}</span>
+                <div style="display:flex;gap:16px;margin-top:4px;font-size:14px;font-weight:700"><a href="#">Edit</a><sc-if value="{{ a.notDefault }}"><a href="#" onClick="{{ a.makeDefault }}">Set as default</a></sc-if></div>
+              </div>
+            </sc-for>
+            <button style="border:1.5px dashed #9AA8BA;border-radius:16px;background:transparent;min-height:140px;font-size:15px;font-weight:700;color:#047857">+ Add address</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ aPayments }}">
+          <h2 style="margin:0;font-size:22px;font-weight:800">Payment methods</h2>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ cards }}" as="c" hint-placeholder-count="2">
+              <div style="background:#fff;border:1px solid #E2E7EE;border-radius:14px;padding:14px 18px;display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+                <span style="width:48px;height:32px;border-radius:6px;background:#0B1F3A;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800">{{ c.brand }}</span>
+                <span style="flex:1 1 160px;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:700">{{ c.label }}</span><span style="font-size:13px;color:#5A6A80">{{ c.sub }}</span></span>
+                <a href="#" style="font-size:14px;font-weight:700">{{ c.action }}</a>
+              </div>
+            </sc-for>
+          </div>
+          <h2 style="margin:12px 0 0;font-size:22px;font-weight:800">Receipts</h2>
+          <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px">
+            <sc-for list="{{ receipts }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:14px 18px;border-top:1px solid {{ r.bt }}">
+                <span style="flex:1 1 200px;display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:700">{{ r.service }}</span><span style="font-size:13px;color:#5A6A80">{{ r.date }}</span></span>
+                <span style="font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;background:{{ r.sbg }};color:{{ r.sfg }}">{{ r.status }}</span>
+                <span style="font-size:15px;font-weight:800;min-width:80px;text-align:right">{{ r.amount }}</span>
+                <a href="#" style="font-size:14px;font-weight:700">PDF</a>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ aProfile }}">
+          <h2 style="margin:0;font-size:22px;font-weight:800">Profile</h2>
+          <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;padding:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+            <sc-for list="{{ profileFields }}" as="f" hint-placeholder-count="4">
+              <label style="display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:700">{{ f.label }}<input value="{{ f.value }}" readOnly="{{ true }}" style="border:1.5px solid #CBD3DE;border-radius:12px;padding:0 14px;min-height:48px;font-size:15px;color:#0B1F3A;background:#fff"></label>
+            </sc-for>
+            <div style="grid-column:1/-1;display:flex;justify-content:flex-end"><button style="border:0;border-radius:12px;background:#047857;color:#fff;padding:0 20px;min-height:48px;font-size:15px;font-weight:800">Save changes</button></div>
+          </div>
+          <h2 style="margin:12px 0 0;font-size:22px;font-weight:800">Notifications</h2>
+          <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px">
+            <sc-for list="{{ notifs }}" as="n" hint-placeholder-count="4">
+              <div style="display:flex;gap:16px;align-items:center;padding:14px 18px;border-top:1px solid {{ n.bt }}">
+                <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:700">{{ n.label }}</span><span style="font-size:13px;color:#5A6A80">{{ n.sub }}</span></span>
+                <button role="switch" aria-label="{{ n.label }}" onClick="{{ n.toggle }}" style="border:0;width:48px;height:28px;border-radius:999px;background:{{ n.bg }};padding:3px;display:flex;justify-content:{{ n.jc }};transition:background .2s;flex-shrink:0"><span style="width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2)"></span></button>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:14px"><span style="color:#5A6A80">Signed in with email · 2-step verification on</span><span style="display:flex;gap:16px"><a href="#" style="font-weight:700;color:#0B1F3A">Sign out</a><a href="#" style="font-weight:700;color:#B42318">Delete account</a></span></div>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ showFooter }}" hint-placeholder-val="{{ true }}">
+<footer style="background:#071528;color:#C9D4E3">
+  <div style="max-width:1200px;margin:0 auto;padding:56px 20px 32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:32px">
+    <div style="display:flex;flex-direction:column;gap:14px;grid-column:span 1;min-width:200px">
+      <span style="display:flex;align-items:center;gap:10px;color:#fff"><span style="width:30px;height:30px;border-radius:8px;background:#10B981;display:grid;place-items:center"><span style="width:11px;height:11px;border-radius:3px;background:#071528;transform:rotate(45deg)"></span></span><span style="font-size:17px;font-weight:800">HomeCrew</span></span>
+      <p style="margin:0;font-size:14px;line-height:1.6">Vetted local pros for every home job, priced upfront.</p>
+    </div>
+    <sc-for list="{{ footerCols }}" as="col" hint-placeholder-count="3">
+      <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:13px;font-weight:700;color:#fff;letter-spacing:.06em;text-transform:uppercase">{{ col.h }}</span>
+        <sc-for list="{{ col.links }}" as="l" hint-placeholder-count="4"><a href="#" style="color:#C9D4E3;font-size:14px">{{ l }}</a></sc-for>
+      </div>
+    </sc-for>
+  </div>
+  <div style="max-width:1200px;margin:0 auto;padding:20px;border-top:1px solid #1A2D4A;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-size:13px;color:#9FB0C8"><span>© 2026 HomeCrew Ltd.</span><span style="display:flex;gap:16px"><a href="#" style="color:#9FB0C8">Privacy</a><a href="#" style="color:#9FB0C8">Terms</a><a href="#" style="color:#9FB0C8">Cookies</a></span></div>
+</footer>
+</sc-if>
+
+<sc-if value="{{ isSpec }}">
+  <div style="max-width:1100px;margin:0 auto;padding:48px 24px 72px;display:flex;flex-direction:column;gap:56px;background:#fff">
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:720px">
+      <span style="font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#047857">Wireframe & spec</span>
+      <h1 style="margin:0;font-size:clamp(30px,4vw,44px);letter-spacing:-.03em;font-weight:800;line-height:1.1">Layout breakdown, tokens and booking flow</h1>
+      <p style="margin:0;font-size:16px;line-height:1.6;color:#5A6A80">Mobile-first: every section is authored for 360px, then expands at 640 / 1024 / 1280. The other tabs are the live hi-fi versions of this outline.</p>
+    </div>
+
+    <section style="display:flex;flex-direction:column;gap:20px">
+      <h2 style="margin:0;font-size:24px;font-weight:800">1 · Tokens</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
+        <sc-for list="{{ swatches }}" as="w" hint-placeholder-count="6">
+          <div style="border:1px solid #E2E7EE;border-radius:14px;overflow:hidden"><div style="height:72px;background:{{ w.hex }}"></div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:700">{{ w.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5A6A80">{{ w.hex }}</span><span style="font-size:12px;color:#5A6A80">{{ w.use }}</span></div></div>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+        <div style="border:1px solid #E2E7EE;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px"><span style="font-size:14px;font-weight:800">Type · Plus Jakarta Sans</span>
+          <sc-for list="{{ typeScale }}" as="t" hint-placeholder-count="5"><div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;border-bottom:1px solid #F0F3F7;padding-bottom:8px"><span style="font-weight:700">{{ t.k }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5A6A80">{{ t.v }}</span></div></sc-for>
+        </div>
+        <div style="border:1px solid #E2E7EE;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px"><span style="font-size:14px;font-weight:800">Layout</span>
+          <sc-for list="{{ layoutTokens }}" as="t" hint-placeholder-count="5"><div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;border-bottom:1px solid #F0F3F7;padding-bottom:8px"><span style="font-weight:700">{{ t.k }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5A6A80;text-align:right">{{ t.v }}</span></div></sc-for>
+        </div>
+      </div>
+    </section>
+
+    <sc-for list="{{ wireframes }}" as="page" hint-placeholder-count="2">
+      <section style="display:flex;flex-direction:column;gap:16px">
+        <h2 style="margin:0;font-size:24px;font-weight:800">{{ page.title }}</h2>
+        <sc-for list="{{ page.rows }}" as="row" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;border-top:1px solid #E2E7EE;padding-top:16px">
+            <div style="border:1.5px dashed #9AA8BA;border-radius:12px;background:#F4F6F9;padding:14px;display:flex;flex-direction:column;gap:8px;min-height:{{ row.h }}">
+              <span style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#0B1F3A">{{ row.name }}</span>
+              <pre style="margin:0;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;color:#5A6A80;white-space:pre-wrap">{{ row.wf }}</pre>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.55">
+              <div><strong>Desktop · </strong><span style="color:#33445C">{{ row.desk }}</span></div>
+              <div><strong>Mobile · </strong><span style="color:#33445C">{{ row.mob }}</span></div>
+              <div style="color:#047857"><strong>UX · </strong>{{ row.note }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </section>
+    </sc-for>
+
+    <section style="display:flex;flex-direction:column;gap:20px">
+      <h2 style="margin:0;font-size:24px;font-weight:800">4 · Booking flow</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:stretch">
+        <sc-for list="{{ flow }}" as="f" hint-placeholder-count="7">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="background:{{ f.bg }};color:{{ f.fg }};border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;min-width:130px;max-width:170px;min-height:96px">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.85">{{ f.n }}</span>
+              <span style="font-size:14px;font-weight:800">{{ f.t }}</span>
+              <span style="font-size:12px;line-height:1.45;opacity:.9">{{ f.d }}</span>
+            </div>
+            <span style="color:#9AA8BA;font-weight:800">{{ f.arrow }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+        <sc-for list="{{ edges }}" as="e" hint-placeholder-count="4">
+          <div style="border:1px solid #E2E7EE;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;font-weight:800">{{ e.t }}</span><span style="font-size:14px;line-height:1.55;color:#5A6A80">{{ e.d }}</span></div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:16px">
+      <h2 style="margin:0;font-size:24px;font-weight:800">5 · Tailwind starters</h2>
+      <sc-for list="{{ snippets }}" as="s" hint-placeholder-count="2">
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:700">{{ s.t }}</span><pre style="margin:0;background:#0B1F3A;color:#D7E1EE;border-radius:14px;padding:18px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.65;overflow-x:auto">{{ s.code }}</pre></div>
+      </sc-for>
+    </section>
+  </div>
+</sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;split&quot;,&quot;centered&quot;],&quot;default&quot;:&quot;split&quot;,&quot;tsType&quot;:&quot;'split'|'centered'&quot;},&quot;showPrices&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { view: 'home', device: 'desktop', narrow: false, query: '', focus: false, catId: 'cleaning', menu: false, t: 0, pkg: 1, day: 0, slot: null, faq: 0, step: 1, address: '', prop: 0, pro: 0, pay: 0, acct: 'bookings', bkf: 'upcoming', rated: {}, defAddr: 0, notif: [true, true, false, true] };
+  ro = new ResizeObserver(e => { const n = e[0].contentRect.width < 760; if (n !== this.state.narrow) this.setState({ narrow: n, t: 0 }); });
+  frameRef = el => { if (el && el !== this.frame) { this.frame = el; this.ro.observe(el); } };
+  componentWillUnmount() { this.ro.disconnect(); }
+
+  CATS = [
+    { id: 'cleaning', name: 'Home Cleaning', service: 'Deep Home Cleaning', kw: 'clean maid tidy end of tenancy oven', from: 49, rating: '4.9', reviews: '2,318', pros: '2,140', photo: 'freshly cleaned kitchen',
+      icon: 'M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8zM19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z',
+      desc: 'A top-to-bottom clean by a vetted pro who brings eco-certified supplies and equipment. Ideal before guests, after works or as a seasonal reset.',
+      packages: [{ n: 'Essential', p: 79, d: 'Up to 2 bedrooms · ~3 hrs' }, { n: 'Standard', p: 119, d: 'Up to 3 bedrooms · ~4.5 hrs' }, { n: 'Complete', p: 169, d: '4+ bedrooms · ~6 hrs, incl. oven & windows' }],
+      included: ['Kitchen surfaces & appliances degreased', 'Bathrooms descaled and disinfected', 'Floors vacuumed and mopped', 'Supplies & equipment brought by pro'], excluded: ['Exterior windows', 'Carpet shampooing'] },
+    { id: 'gardening', name: 'Gardening', service: 'Garden Maintenance', kw: 'garden lawn mow hedge weed', from: 39, rating: '4.8', reviews: '1,204', pros: '980', photo: 'tidy lawn and borders',
+      icon: 'M12 21V11M12 11C12 7 9 4 4 4c0 4 3 7 8 7zM12 13c0-3 2.5-6 7-6 0 4-3 6-7 6z',
+      desc: 'Lawn care, hedges and borders kept in shape by local gardeners. One-off tidy-ups or recurring visits.',
+      packages: [{ n: 'Lawn tidy', p: 59, d: 'Mow, edge & clippings removed' }, { n: 'Seasonal', p: 99, d: 'Lawn, hedges & weeding · ~3 hrs' }, { n: 'Full makeover', p: 249, d: 'Clearance, planting & green waste' }],
+      included: ['Mowing and edging', 'Hedge and shrub trimming', 'Weeding of beds', 'Green waste taken away'], excluded: ['Tree felling', 'Plants & materials'] },
+    { id: 'renovation', name: 'Renovation', service: 'Interior Renovation', kw: 'renovate paint decor plaster', from: 320, rating: '4.8', reviews: '846', pros: '410', photo: 'freshly painted living room',
+      icon: 'M4 4h13v5H4zM17 6.5h3V12h-8v3M11 15h2v6h-2z',
+      desc: 'Painting, plastering and room refreshes with a fixed quote after a free video survey.',
+      packages: [{ n: 'Room refresh', p: 320, d: 'Paint 1 room, walls & ceiling' }, { n: 'Two rooms', p: 690, d: 'Paint + minor plaster repairs' }, { n: 'Whole floor', p: 1450, d: 'Up to 4 rooms, prep included' }],
+      included: ['Surface prep & filling', 'Two coats of trade paint', 'Furniture moved & covered', 'Full clean-up'], excluded: ['Wallpaper removal', 'Structural work'] },
+    { id: 'construction', name: 'Building & Construction', service: 'Building Works', kw: 'build construction extension wall patio brick', from: 89, rating: '4.7', reviews: '512', pros: '260', photo: 'brickwork extension in progress',
+      icon: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6',
+      desc: 'From garden walls to extensions — licensed builders with staged, milestone-based payments.',
+      packages: [{ n: 'Site survey', p: 89, d: 'On-site assessment & written quote' }, { n: 'Small build', p: 1200, d: 'Garden wall, patio or steps' }, { n: 'Extension plan', p: 2500, d: 'Drawings, permits & build schedule' }],
+      included: ['Licensed, insured builders', 'Materials list & quote', 'Milestone payments', 'Site left clean daily'], excluded: ['Planning fees', 'Skip hire'] },
+    { id: 'electrical', name: 'Electrical', service: 'Electrical Repairs', kw: 'electric electrician socket light wiring fuse', from: 69, rating: '4.9', reviews: '1,577', pros: '730', photo: 'electrician fitting a light',
+      icon: 'M13 2L4 14h7l-1 8 9-12h-7z',
+      desc: 'Certified electricians for faults, new sockets, lighting and safety inspections.',
+      packages: [{ n: 'Call-out + 1 hr', p: 69, d: 'Diagnose & fix small faults' }, { n: 'Install', p: 99, d: 'Up to 2 sockets or light fittings' }, { n: 'Safety check', p: 149, d: 'Full inspection & certificate' }],
+      included: ['Certified electrician', 'Testing on completion', 'Standard fittings', '12-month workmanship warranty'], excluded: ['Rewiring', 'Fittings you supply after visit'] },
+    { id: 'appliance', name: 'Appliance Installation', service: 'Appliance Installation', kw: 'appliance washing machine dishwasher oven install', from: 59, rating: '4.8', reviews: '938', pros: '520', photo: 'dishwasher being installed',
+      icon: 'M5 3h14v18H5zM5 7h14M8 5h.01M12 15m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0',
+      desc: 'Washing machines, dishwashers, ovens and more — connected, tested and old units removed.',
+      packages: [{ n: 'Single', p: 59, d: 'One freestanding appliance' }, { n: 'Integrated', p: 99, d: 'One built-in appliance' }, { n: 'Kitchen bundle', p: 219, d: 'Up to 3 appliances' }],
+      included: ['Connection to existing supply', 'Leak & function test', 'Packaging removed', 'Old unit recycled'], excluded: ['New plumbing runs', 'Cabinet modification'] }
+  ];
+  PROS = [{ name: 'Maria Alves', initials: 'MA', rating: '4.97', jobs: '612', tag: 'Top Pro 2026' }, { name: 'Dev Patel', initials: 'DP', rating: '4.94', jobs: '388', tag: 'Fast responder' }, { name: 'Sam Okoro', initials: 'SO', rating: '4.92', jobs: '251', tag: 'Eco supplies' }];
+  DAYS = [['Sat', 7], ['Sun', 8], ['Mon', 9], ['Tue', 10], ['Wed', 11], ['Thu', 12]];
+  SLOTS = [['08:00', '08–10'], ['10:00', '10–12'], ['12:00', '12–14'], ['14:00', '14–16'], ['16:00', '16–18'], ['18:00', '18–20']];
+  TESTI = [
+    { name: 'Priya S.', initials: 'PS', meta: 'Deep clean · Camden', quote: 'Booked at 9pm, cleaner arrived at 10 the next morning. The flat has never looked better and the price was exactly what I was quoted.' },
+    { name: 'Tom R.', initials: 'TR', meta: 'Electrical · Leeds', quote: 'Two new sockets and a dodgy light fixed in under an hour. Got the certificate by email the same day.' },
+    { name: 'Hannah K.', initials: 'HK', meta: 'Gardening · Bristol', quote: 'Our gardener now comes every fortnight. Rebooking takes two taps and I can see who is coming.' },
+    { name: 'Marcus L.', initials: 'ML', meta: 'Appliance install · Leicester', quote: 'Dishwasher plumbed in and the old one taken away. No surprise charges, no fuss.' },
+    { name: 'Elena G.', initials: 'EG', meta: 'Renovation · Manchester', quote: 'The video survey saved a week of back-and-forth. Fixed quote, finished a day early.' }
+  ];
+
+  go(view, extra) { this.setState({ view, menu: false, focus: false, ...(extra || {}) }); window.scrollTo(0, 0); }
+  openCat(id) { this.go('service', { catId: id, pkg: 1, query: '' }); }
+
+  renderVals() {
+    const s = this.state, narrow = s.narrow, cat = this.CATS.find(c => c.id === s.catId), pkg = cat.packages[s.pkg];
+    const fmt = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
+    const G = '#047857', B = '#E2E7EE', TINT = '#F0FAF5';
+    const pick = on => ({ bd: on ? G : B, bg: on ? TINT : '#fff', dot: on ? G : 'transparent' });
+    const variant = this.props.heroVariant ?? 'split', showPrices = this.props.showPrices ?? true;
+    const cats = this.CATS.map(c => ({ ...c, fromLabel: 'from ' + fmt(c.from), tileSub: showPrices ? 'from ' + fmt(c.from) : c.pros + ' pros', open: () => this.openCat(c.id) }));
+    const q = s.query.trim().toLowerCase();
+    const sugg = q ? cats.filter(c => (c.name + ' ' + c.service + ' ' + c.kw).toLowerCase().includes(q)) : cats.slice(0, 4);
+    const doSearch = () => this.openCat((sugg[0] || cats[0]).id);
+    const perView = narrow ? 1 : 2, maxT = this.TESTI.length - perView, t = Math.min(s.t, maxT);
+    const slot = s.slot, day = this.DAYS[s.day];
+    const cantNext = (s.step === 1 && s.address.trim().length < 3) || (s.step === 2 && slot === null);
+    const proName = s.pro === 0 ? 'Best match' : this.PROS[s.pro - 1].name;
+    const tab = (label, v) => ({ label, onClick: () => this.go(v), bg: s.view === v ? '#fff' : 'transparent', fg: s.view === v ? '#0B1F3A' : '#C9D4E3' });
+    const slotRange = slot === null ? null : this.SLOTS[slot][1];
+    const stepLabels = ['Details', 'Schedule', 'Pro', 'Payment', 'Done'];
+    return {
+      tabs: [tab('Homepage', 'home'), tab('Service details', 'service'), tab('Booking flow', 'book'), tab('Account', 'account'), tab('Wireframe & spec', 'spec')],
+      isAccount: s.view === 'account', goAccount: () => this.go('account'),
+      navDir: narrow ? 'row' : 'column', navMax: narrow ? '100%' : '260px',
+      acctNav: [['bookings', 'My bookings', 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4', '1'], ['addresses', 'Addresses', 'M12 21s-7-6.2-7-11.5A7 7 0 0119 9.5C19 14.8 12 21 12 21zM12 7a2.5 2.5 0 100 5 2.5 2.5 0 000-5z', ''], ['payments', 'Payments', 'M3 6h18v12H3zM3 10h18M7 15h4', ''], ['profile', 'Profile & settings', 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4 3.6-6 8-6s8 2 8 6', '']].map(([id, label, icon, badge]) => ({ label, icon, badge, bg: s.acct === id ? '#0B1F3A' : 'transparent', fg: s.acct === id ? '#fff' : '#0B1F3A', pick: () => this.setState({ acct: id }) })),
+      aBookings: s.acct === 'bookings', aAddresses: s.acct === 'addresses', aPayments: s.acct === 'payments', aProfile: s.acct === 'profile',
+      bkFilters: [['upcoming', 'Upcoming (2)'], ['past', 'Past']].map(([id, label]) => ({ label, bg: s.bkf === id ? '#fff' : 'transparent', sh: s.bkf === id ? '0 1px 3px rgba(11,31,58,.12)' : 'none', pick: () => this.setState({ bkf: id }) })),
+      showUpcoming: s.bkf === 'upcoming', showPast: s.bkf === 'past',
+      trackSteps: ['Confirmed', 'On the way', 'In progress', 'Done'].map((label, i) => ({ label, c: i < 2 ? G : B, lc: i < 2 ? '#0B1F3A' : '#9AA8BA' })),
+      pastBookings: [['electrical', 'Electrical Repairs · Install', '24 Oct · Dev Patel', 99, true], ['cleaning', 'Deep Home Cleaning · Standard', '2 Oct · Maria Alves', 119, false], ['appliance', 'Appliance Installation · Single', '18 Sep · Sam Okoro', 59, true]].map(([id, service, meta, p, r], i) => { const rated = r || !!s.rated[i]; return { service, meta, price: fmt(p + 3.5), icon: this.CATS.find(c => c.id === id).icon, rated, unrated: !rated, rate: () => this.setState({ rated: { ...s.rated, [i]: true } }), again: () => this.openCat(id) }; }),
+      addresses: [['Home', '14 Elm Street, London NW1 7AB', 'Key with concierge · Dog on site'], ['Office', 'Unit 3, 88 Canal Road, London N1 9RT', 'Weekdays only, 9–17']].map(([label, line, note], i) => ({ label, line, note, isDefault: i === s.defAddr, notDefault: i !== s.defAddr, bd: i === s.defAddr ? G : B, makeDefault: e => { e.preventDefault(); this.setState({ defAddr: i }); } })),
+      cards: [{ brand: 'VISA', label: 'Visa •••• 4242', sub: 'Default · expires 08/28', action: 'Edit' }, { brand: 'Pay', label: 'Apple Pay', sub: 'Linked', action: 'Remove' }],
+      receipts: [['Deep Home Cleaning', 'Today', 'Held', 122.5], ['Electrical Repairs', '24 Oct 2026', 'Paid', 102.5], ['Deep Home Cleaning', '2 Oct 2026', 'Paid', 122.5], ['Appliance Installation', '18 Sep 2026', 'Paid', 62.5]].map(([service, date, status, a], i) => ({ service, date, status, amount: fmt(a), bt: i ? '#E2E7EE' : 'transparent', sbg: status === 'Held' ? '#FFFBEB' : '#E7F6EF', sfg: status === 'Held' ? '#92400E' : '#047857' })),
+      profileFields: [['Full name', 'Jana Doe'], ['Email', 'jana.d@email.com'], ['Phone', '+44 7700 900123'], ['Preferred language', 'English']].map(([label, value]) => ({ label, value })),
+      notifs: [['Booking updates', 'Confirmations, pro on the way, completion'], ['SMS reminders', 'Day-before and 1-hour reminders'], ['Offers & tips', 'Seasonal deals, max 2 per month'], ['Review requests', 'Ask me to rate after each job']].map(([label, sub], i) => { const on = s.notif[i]; return { label, sub, bg: on ? G : '#CBD3DE', jc: on ? 'flex-end' : 'flex-start', bt: i ? '#E2E7EE' : 'transparent', toggle: () => this.setState({ notif: s.notif.map((v, j) => j === i ? !v : v) }) }; }),
+      devices: ['desktop', 'mobile'].map(d => ({ label: d === 'desktop' ? 'Desktop' : 'Mobile 390', onClick: () => this.setState({ device: d }), bg: s.device === d ? '#10B981' : 'transparent', fg: s.device === d ? '#0B1F3A' : '#C9D4E3' })),
+      frameMax: s.device === 'mobile' ? '390px' : '1280px', frameRef: this.frameRef,
+      narrow, wide: !narrow, menu: s.menu, isHome: s.view === 'home', isService: s.view === 'service', isBook: s.view === 'book', isSpec: s.view === 'spec', notSpec: s.view !== 'spec', showFooter: s.view === 'home' || s.view === 'service',
+      goHome: () => this.go('home'), goHomeLink: e => { e.preventDefault(); this.go('home'); }, toggleMenu: () => this.setState({ menu: !s.menu }),
+      query: s.query, onQuery: e => this.setState({ query: e.target.value, focus: true }), onFocus: () => this.setState({ focus: true }), onBlur: () => setTimeout(() => this.setState({ focus: false }), 120),
+      onKey: e => { if (e.key === 'Enter') doSearch(); }, doSearch,
+      showSugg: s.focus && s.view === 'home', sugg, noSugg: q && !sugg.length,
+      heroImg: !narrow && variant === 'split', heroAlign: variant === 'centered' ? 'center' : 'flex-start', heroText: variant === 'centered' ? 'center' : 'left',
+      popular: [['Deep clean', 'cleaning'], ['Lawn mowing', 'gardening'], ['Socket install', 'electrical'], ['Washing machine', 'appliance']].map(([label, id]) => ({ label, open: () => this.openCat(id) })),
+      quickBook: () => this.go('book', { step: 1 }),
+      cats,
+      steps: [
+        { n: '01', title: 'Tell us the job', text: 'Search or pick a category, choose a package and see the full price before you book.', icon: 'M11 4a7 7 0 100 14 7 7 0 000-14zM20 20l-4-4' },
+        { n: '02', title: 'Pick a time', text: 'Choose an arrival window that suits you — same-day slots in most areas.', icon: 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4' },
+        { n: '03', title: 'Relax, it’s handled', text: 'Track your pro, pay only when the job is done, then rate the work.', icon: 'M5 12.5l4.5 4.5L19 7.5' }
+      ],
+      trust: [
+        { title: 'Verified Pros', text: 'ID, background and qualification checks, plus £1M public liability cover on every job.', icon: 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6zM8.5 12l2.5 2.5 4.5-5' },
+        { title: 'Transparent Pricing', text: 'Fixed package prices shown upfront. Any extras need your approval in the app.', icon: 'M3 12V4h8l10 10-8 8zM7.5 7.5h.01' },
+        { title: 'Satisfaction Guarantee', text: 'Not right? We send a pro back free or refund you — no forms, no arguing.', icon: 'M12 21a9 9 0 100-18 9 9 0 000 18zM8.5 14.5s1.3 2 3.5 2 3.5-2 3.5-2M9 9.5h.01M15 9.5h.01' }
+      ],
+      testimonials: this.TESTI, tBasis: narrow ? '100%' : 'calc(50% - 8px)',
+      tTransform: `translateX(calc(${-t} * (${narrow ? '100% + 16px' : '50% + 8px'})))`,
+      tPrev: () => this.setState({ t: Math.max(0, t - 1) }), tNext: () => this.setState({ t: t >= maxT ? 0 : t + 1 }),
+      tDots: Array.from({ length: maxT + 1 }, (_, i) => ({ onClick: () => this.setState({ t: i }), w: i === t ? '24px' : '8px', bg: i === t ? '#0B1F3A' : '#CBD3DE' })),
+      cat, pkg, pkgPrice: fmt(pkg.p), total: fmt(pkg.p + 3.5),
+      pkgs: cat.packages.map((p, i) => ({ ...p, ...pick(i === s.pkg), price: fmt(p.p), popular: i === 1, pick: () => this.setState({ pkg: i }) })),
+      pros: this.PROS,
+      faqs: [
+        { q: 'Do I need to be home?', a: 'Not always — leave access notes when booking. Your pro checks in and out in the app with photos.' },
+        { q: 'What if the job takes longer?', a: 'Package prices are fixed. If extra work is needed, your pro sends a quote you approve or decline in-app.' },
+        { q: 'Can I reschedule or cancel?', a: 'Yes, free of charge up to 24 hours before your arrival window.' }
+      ].map((f, i) => ({ ...f, open: s.faq === i, sign: s.faq === i ? '−' : '+', toggle: () => this.setState({ faq: s.faq === i ? -1 : i }) })),
+      days: this.DAYS.map(([dow, num], i) => { const on = i === s.day; return { dow, num, bd: on ? '#0B1F3A' : B, bg: on ? '#0B1F3A' : '#fff', fg: on ? '#fff' : '#0B1F3A', pick: () => this.setState({ day: i, slot: null }) }; }),
+      slots: this.SLOTS.map(([label, range], i) => { const off = (i + s.day) % 4 === 3, on = i === slot; return { label, range, off, bd: on ? G : B, bg: on ? G : off ? '#F4F6F9' : '#fff', fg: on ? '#fff' : off ? '#9AA8BA' : '#0B1F3A', deco: off ? 'line-through' : 'none', pick: () => !off && this.setState({ slot: i }) }; }),
+      bookLabel: slot === null ? 'Continue to book' : `Book ${day[0]} ${day[1]} · ${this.SLOTS[slot][0]}`,
+      startBooking: () => this.go('book', { step: 1 }),
+      stepper: stepLabels.map((label, i) => { const n = i + 1, done = n < s.step, cur = n === s.step; return { label, mark: done ? '✓' : n, bg: done ? G : cur ? '#0B1F3A' : '#fff', fg: done || cur ? '#fff' : '#5A6A80', bd: done ? G : cur ? '#0B1F3A' : '#CBD3DE', lc: cur || done ? '#0B1F3A' : '#5A6A80', line: done ? G : B }; }),
+      s1: s.step === 1, s2: s.step === 2, s3: s.step === 3, s4: s.step === 4, s5: s.step === 5,
+      address: s.address, onAddress: e => this.setState({ address: e.target.value }),
+      propTypes: ['House', 'Flat', 'Office'].map((label, i) => ({ label, ...pick(i === s.prop), pick: () => this.setState({ prop: i }) })),
+      proOpts: [{ name: 'Best match (recommended)', initials: '★', sub: 'Fastest confirmation · highest-rated available', av: G }, ...this.PROS.map(p => ({ ...p, sub: `★ ${p.rating} · ${p.jobs} jobs · ${p.tag}`, av: '#0B1F3A' }))].map((p, i) => ({ ...p, ...pick(i === s.pro), pick: () => this.setState({ pro: i }) })),
+      payOpts: [['Card ending 4242', 'Visa'], ['Apple Pay', 'Fastest'], ['Add new card', '']].map(([label, sub], i) => ({ label, sub, ...pick(i === s.pay), pick: () => this.setState({ pay: i }) })),
+      summary: [
+        { k: 'Date', v: `${day[0]} ${day[1]} Nov`, c: '#0B1F3A' },
+        { k: 'Arrival', v: slotRange || 'Not selected', c: slotRange ? '#0B1F3A' : '#9AA8BA' },
+        { k: 'Address', v: s.address.trim() || 'Not added', c: s.address.trim() ? '#0B1F3A' : '#9AA8BA' },
+        { k: 'Pro', v: proName, c: '#0B1F3A' }
+      ],
+      confirmLine: `${proName === 'Best match' ? 'Your matched pro' : proName} will arrive ${day[0]} ${day[1]} Nov between ${slotRange || '—'}. We've sent the details to your email.`,
+      timeline: [
+        { title: 'Booking confirmed', sub: 'Just now', c: G },
+        { title: 'Pro accepts & messages you', sub: 'Usually within 15 minutes', c: '#0B1F3A' },
+        { title: 'Live tracking on the day', sub: 'See when your pro is on the way', c: '#CBD3DE' },
+        { title: 'Pay & review after the job', sub: 'Held amount released only when you approve', c: '#CBD3DE' }
+      ],
+      cantNext, nextBg: cantNext ? '#9AA8BA' : G, nextCursor: cantNext ? 'not-allowed' : 'pointer',
+      nextLabel: s.step === 4 ? `Confirm & pay ${fmt(pkg.p + 3.5)}` : s.step === 5 ? 'Track booking' : 'Continue',
+      backLabel: s.step === 1 ? '← Service' : s.step === 5 ? 'Back to home' : '← Back',
+      next: () => { if (cantNext) return; s.step < 5 ? this.setState({ step: s.step + 1 }) : this.go('home', { step: 1 }); window.scrollTo(0, 0); },
+      back: () => s.step === 1 ? this.go('service') : s.step === 5 ? this.go('home', { step: 1, slot: null, address: '' }) : this.setState({ step: s.step - 1 }),
+      footerCols: [
+        { h: 'Services', links: ['Cleaning', 'Gardening', 'Renovation', 'Electrical', 'Appliances'] },
+        { h: 'Company', links: ['About', 'Become a pro', 'Careers', 'Press'] },
+        { h: 'Support', links: ['Help centre', 'Safety', 'Guarantee', 'Contact'] }
+      ],
+      swatches: [
+        { name: 'Navy 900', hex: '#0B1F3A', use: 'Primary text, hero, header mark' },
+        { name: 'Navy 950', hex: '#071528', use: 'Footer' },
+        { name: 'Emerald 700', hex: '#047857', use: 'Primary CTA, links, selected' },
+        { name: 'Emerald 500', hex: '#10B981', use: 'Accent on navy only' },
+        { name: 'Emerald 50', hex: '#E7F6EF', use: 'Icon tiles, success tint' },
+        { name: 'Gray 50', hex: '#F4F6F9', use: 'Page background' },
+        { name: 'Gray 200', hex: '#E2E7EE', use: 'Borders, dividers' },
+        { name: 'Slate 500', hex: '#5A6A80', use: 'Secondary text' }
+      ],
+      typeScale: [{ k: 'Display', v: '56 / 1.05 / 800 → 34 mobile' }, { k: 'H2', v: '36 / 1.15 / 800 → 26' }, { k: 'H3', v: '20 / 1.3 / 700' }, { k: 'Body', v: '16 / 1.6 / 400' }, { k: 'Small', v: '13–14 / 1.5 / 500' }],
+      layoutTokens: [{ k: 'Container', v: '1200 max · 20px gutters' }, { k: 'Breakpoints', v: '640 · 1024 · 1280' }, { k: 'Spacing', v: '4pt grid · sections 64' }, { k: 'Radius', v: '10 input · 16 card · 20 panel · pill' }, { k: 'Touch target', v: '≥ 44px on mobile' }],
+      wireframes: [
+        { title: '2 · Homepage', rows: [
+          { name: 'Header', h: '70px', wf: '[■ Logo] [Categories ▾] [🔍 Search……] [Become a pro] [Sign in] (●)', desk: '68px sticky bar; search capped at 420px; categories open a mega-panel.', mob: 'Logo · search icon · menu. Categories move into the menu sheet.', note: 'Stays sticky; account avatar replaces Sign in when logged in.' },
+          { name: 'Hero', h: '150px', wf: 'eyebrow chip\nH1 headline (2 lines)\nsubcopy\n[ What service do you need today? | Postcode | Search ]\nPopular: (chip)(chip)(chip)\n[Quick book in 60s →]  ★ 4.8              [ photo + live status card ]', desk: 'Navy band, 7/5 split: copy + search left, photo with floating status cards right.', mob: 'Stacked; photo removed; search fields wrap and Search goes full-width.', note: 'Autocomplete on first keystroke; Enter jumps to the top match.' },
+          { name: 'Service categories', h: '110px', wf: '[◆ Cleaning ] [◆ Gardening ] [◆ Renovation ]\n[◆ Building ] [◆ Electrical] [◆ Appliances]', desk: '6 tiles in one row (auto-fill, min 160px).', mob: '2 columns; whole tile tappable.', note: 'Show "from $X" on each tile so price is clear before clicking.' },
+          { name: 'How it works', h: '90px', wf: '[01 ◎ Tell us]  →  [02 ▦ Pick a time]  →  [03 ✓ Relax]', desk: '3 equal cards on a white band.', mob: 'Vertical stack, numbered.', note: 'Keep to 3 steps; each ≤ 20 words.' },
+          { name: 'Trust badges', h: '80px', wf: '(⛨) Verified Pros   (◇) Transparent Pricing   (☺) Satisfaction Guarantee', desk: 'Navy band, 3 columns, icon + title + one line.', mob: 'Stacked list.', note: 'The same three badges repeat as chips on the service page.' },
+          { name: 'Testimonials slider', h: '100px', wf: '←  →\n[ ★★★★★ quote … — name, service ]  [ ★★★★★ quote … ]\n• ━ • • ', desk: '2 cards visible; arrows + dots.', mob: '1 card, swipe; dots below.', note: 'Show the service and area in the caption so it reads as a real review.' },
+          { name: 'Footer', h: '80px', wf: '[■ Logo + line]  Services  Company  Support\n© 2026 · Privacy · Terms', desk: '4 columns on Navy 950.', mob: 'Columns stack; links ≥ 44px tall.', note: 'Repeat "Become a pro" here for supply-side sign-ups.' }
+        ] },
+        { title: '3 · Service details page', rows: [
+          { name: 'Breadcrumb + gallery', h: '90px', wf: 'Home / Cleaning / Deep Home Cleaning\n[        main photo        ][before]\n[                          ][after ]', desk: '2/3 main photo, before/after stack on the right.', mob: 'Single swipeable photo.', note: 'Before/after photos show the result customers will get.' },
+          { name: 'Title + trust', h: '80px', wf: '(Category chip)\nH1 Service name\n★ 4.9 · 2,318 reviews · 2,140 pros\n(⛨ Verified)(◇ Pricing)(☺ Guarantee)', desk: 'Left column, max 640px copy.', mob: 'Same, chips wrap.', note: 'Rating sits next to the title for trust.' },
+          { name: 'Package selector', h: '80px', wf: '( ) Essential $79   (●) Standard $119 [Most booked]   ( ) Complete $169', desk: '3 radio cards in a row.', mob: 'Stacked radio cards.', note: 'Pre-select the middle package; the price updates the booking card live.' },
+          { name: 'Included / Pros / FAQ', h: '90px', wf: '✓ included   – not included\n[pro card][pro card][pro card]\n▸ FAQ accordion', desk: 'Stacked sections in main column.', mob: 'Same order.', note: 'List what is not included so the price has no surprises.' },
+          { name: 'Booking card', h: '120px', wf: 'Standard ............ $119\nDate  [Sat 7][Sun 8][Mon 9]…\nTime  [08:00][10:00][12:00]…\nFee $3.50 · Total $122.50\n[ Book Sat 7 · 10:00 ]', desk: 'Sticky right column, 360–400px, top 88px.', mob: 'Sticky bottom bar: package · total · [Book now].', note: 'Unavailable slots are struck through, not hidden.' }
+        ] }
+      ],
+      flow: [
+        { n: 'ENTRY', t: 'Search / tile / Quick book', d: 'Hero search, category grid, popular chips', bg: '#F4F6F9', fg: '#0B1F3A', arrow: '→' },
+        { n: 'PAGE', t: 'Service details', d: 'Package + date + slot preselected', bg: '#F4F6F9', fg: '#0B1F3A', arrow: '→' },
+        { n: 'STEP 1', t: 'Details', d: 'Address, property type, notes', bg: '#0B1F3A', fg: '#fff', arrow: '→' },
+        { n: 'STEP 2', t: 'Schedule', d: 'Day + arrival window', bg: '#0B1F3A', fg: '#fff', arrow: '→' },
+        { n: 'STEP 3', t: 'Pro', d: 'Best match or pick a pro', bg: '#0B1F3A', fg: '#fff', arrow: '→' },
+        { n: 'STEP 4', t: 'Review & pay', d: 'Amount held, charged on completion', bg: '#0B1F3A', fg: '#fff', arrow: '→' },
+        { n: 'STEP 5', t: 'Confirmed', d: 'Ref, timeline, tracking, review', bg: '#047857', fg: '#fff', arrow: '' }
+      ],
+      edges: [
+        { t: 'Out-of-area postcode', d: 'Validate at Step 1; offer "Notify me" instead of an empty pro list.' },
+        { t: 'No slots that day', d: 'Strike through full slots; suggest the nearest free day.' },
+        { t: 'Guest checkout', d: 'Ask for email/phone at Step 4; create the account after payment.' },
+        { t: 'Leaving mid-flow', d: 'Save the draft booking for 24h; show "Continue booking" in the header.' }
+      ],
+      snippets: [
+        { t: 'tailwind.config.js', code: `module.exports = {\n  theme: {\n    extend: {\n      colors: {\n        navy:    { 900: '#0B1F3A', 950: '#071528', 700: '#1A3358' },\n        emerald: { 50: '#E7F6EF', 500: '#10B981', 700: '#047857', 800: '#065F46' },\n        ink:     { 500: '#5A6A80' },\n        surface: { 50: '#F4F6F9', 200: '#E2E7EE' },\n      },\n      fontFamily: { sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'] },\n      borderRadius: { card: '16px', panel: '20px' },\n    },\n  },\n};` },
+        { t: 'Hero search bar', code: `<form class="flex flex-wrap gap-2 rounded-2xl bg-white p-2 shadow-xl">\n  <label class="flex min-h-[52px] flex-[1_1_240px] items-center gap-2.5 px-3">\n    <svg class="h-5 w-5 text-emerald-700" …></svg>\n    <input class="w-full bg-transparent text-base outline-none placeholder:text-ink-500"\n           placeholder="What service do you need today?" />\n  </label>\n  <label class="flex min-h-[52px] flex-[0_1_150px] items-center gap-2 border-l border-surface-200 px-3">\n    <input class="w-full bg-transparent outline-none" placeholder="Postcode" />\n  </label>\n  <button class="min-h-[52px] flex-1 rounded-xl bg-emerald-700 px-6 font-bold text-white hover:bg-emerald-800 sm:flex-none">\n    Search\n  </button>\n</form>` },
+        { t: 'Category tile', code: `<a href="/services/cleaning"\n   class="flex min-h-[168px] flex-col gap-4 rounded-card border border-surface-200 bg-white p-5\n          transition hover:border-emerald-700 hover:shadow-lg">\n  <span class="grid h-13 w-13 place-items-center rounded-[14px] bg-emerald-50">\n    <svg class="h-6 w-6 stroke-emerald-700" …></svg>\n  </span>\n  <span class="mt-auto">\n    <span class="block font-bold text-navy-900">Home Cleaning</span>\n    <span class="text-sm text-ink-500">from $49</span>\n  </span>\n</a>` }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

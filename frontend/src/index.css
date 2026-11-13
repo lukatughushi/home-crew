@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+/* Design tokens — from design-specs/prototype/HomeCrew UI -KA-.dc.html ("სპეციფიკაცია" tab) */
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Noto Sans Georgian", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Navy — text, hero, header mark, footer */
+  --color-navy-700: #1a3358;
+  --color-navy-800: #152c50;
+  --color-navy-600: #2a4470;
+  --color-navy-900: #0b1f3a;
+  --color-navy-950: #071528;
+
+  /* Brand (emerald) — CTAs, links, selected; 500 only on navy */
+  --color-brand-50: #e7f6ef;
+  --color-brand-400: #34d399;
+  --color-brand-500: #10b981;
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+
+  /* Neutrals */
+  --color-surface-50: #f4f6f9;
+  --color-surface-200: #e2e7ee;
+  --color-surface-300: #cbd3de;
+  --color-ink-400: #7a8799;
+  --color-ink-500: #5a6a80;
+  --color-ink-600: #33445c;
+  --color-mist-300: #c9d4e3;
+  --color-mist-400: #9fb0c8;
+
+  --color-star: #f59e0b;
+  --color-star-light: #fbbf24;
+
+  --radius-card: 16px;
+  --radius-panel: 20px;
+}
+
+@layer base {
+  body {
+    @apply bg-surface-50 font-sans text-navy-900 antialiased;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-ink-400;
+  }
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Georgian:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F6F9;font-family:'Plus Jakarta Sans','Noto Sans Georgian',system-ui,sans-serif;color:#0B1F3A;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#047857;text-decoration:none}a:hover{color:#065F46;text-decoration:underline}
+button,select{font-family:inherit;cursor:pointer}input,textarea{font-family:inherit}
+input::placeholder{color:#7A8799}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="display:flex;flex-direction:{{ rootDir }};min-height:100vh">
+
+<sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+  <aside style="width:252px;flex-shrink:0;background:#0B1F3A;color:#fff;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:20px 14px;gap:24px">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 8px">
+      <span style="width:32px;height:32px;border-radius:9px;background:#10B981;display:grid;place-items:center"><span style="width:12px;height:12px;border-radius:3px;background:#0B1F3A;transform:rotate(45deg)"></span></span>
+      <span style="display:flex;flex-direction:column"><span style="font-size:17px;font-weight:800;letter-spacing:-.02em">HomeCrew</span><span style="font-size:11px;font-weight:700;color:#9FB0C8;letter-spacing:.08em">ADMIN</span></span>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="6">
+        <button onClick="{{ n.go }}" style="border:0;border-radius:10px;background:{{ n.bg }};color:{{ n.fg }};min-height:44px;padding:0 12px;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600;text-align:left" style-hover="background:#152C50">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="{{ n.icon }}"></path></svg>
+          <span style="flex:1">{{ n.label }}</span>
+          <sc-if value="{{ n.badge }}"><span style="min-width:22px;height:22px;border-radius:999px;background:{{ n.badgeBg }};color:#0B1F3A;font-size:11px;font-weight:800;display:grid;place-items:center;padding:0 6px">{{ n.badge }}</span></sc-if>
+        </button>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;background:#152C50;border-radius:14px;padding:14px;display:flex;gap:10px;align-items:center">
+      <span style="width:38px;height:38px;border-radius:50%;background:#10B981;color:#0B1F3A;display:grid;place-items:center;font-weight:800;font-size:14px;flex-shrink:0">თგ</span>
+      <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:700">თეონა გოგია</span><span style="font-size:12px;color:#9FB0C8">ოპერაციების მენეჯერი</span></span>
+    </div>
+  </aside>
+</sc-if>
+<sc-if value="{{ narrow }}">
+  <div style="background:#0B1F3A;color:#fff;padding:12px 16px;display:flex;flex-direction:column;gap:12px;position:sticky;top:0;z-index:20">
+    <div style="display:flex;align-items:center;gap:10px"><span style="width:28px;height:28px;border-radius:8px;background:#10B981;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:2px;background:#0B1F3A;transform:rotate(45deg)"></span></span><span style="font-size:16px;font-weight:800">HomeCrew <span style="font-size:11px;color:#9FB0C8;letter-spacing:.08em">ADMIN</span></span></div>
+    <div style="display:flex;gap:4px;overflow-x:auto">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="6"><button onClick="{{ n.go }}" style="border:0;border-radius:999px;background:{{ n.bg }};color:{{ n.fg }};min-height:40px;padding:0 14px;font-size:13px;font-weight:700;white-space:nowrap;flex-shrink:0">{{ n.label }}</button></sc-for>
+    </div>
+  </div>
+</sc-if>
+
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+  <header style="background:#fff;border-bottom:1px solid #E2E7EE;padding:16px 28px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;position:sticky;top:{{ headerTop }};z-index:10">
+    <div style="flex:1 1 240px;display:flex;flex-direction:column;gap:2px"><h1 style="margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em">{{ title }}</h1><span style="font-size:13px;color:#5A6A80">{{ subtitle }}</span></div>
+    <div style="flex:0 1 380px;display:flex;gap:8px;min-width:0"><div style="flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:1px solid #E2E7EE;border-radius:10px;padding:0 12px;height:42px;background:#F4F6F9">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5A6A80" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+      <input value="{{ bkQuery }}" onChange="{{ onGlobalSearch }}" placeholder="ჯავშნის ID, მომხმარებელი, ხელოსანი" style="border:0;outline:0;flex:1;min-width:0;font-size:14px;background:transparent;color:#0B1F3A">
+    </div>
+    <button aria-label="შეტყობინებები" style="flex-shrink:0;position:relative;width:42px;height:42px;border-radius:10px;border:1px solid #E2E7EE;background:#fff;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B1F3A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 16V11a6 6 0 1112 0v5l2 2H4zM10 20a2 2 0 004 0"></path></svg><span style="position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:50%;background:#B42318;border:2px solid #fff"></span></button></div>
+  </header>
+
+  <main style="padding:24px 28px 64px;display:flex;flex-direction:column;gap:20px;max-width:1440px;width:100%">
+
+  <sc-if value="{{ vDash }}" hint-placeholder-val="{{ true }}">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+        <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:13px;font-weight:600;color:#5A6A80">{{ k.k }}</span>
+          <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">{{ k.v }}</span>
+          <span style="font-size:12px;font-weight:700;color:{{ k.c }}">{{ k.d }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+      <sc-for list="{{ attention }}" as="a" hint-placeholder-count="3">
+        <button onClick="{{ a.go }}" style="border:1px solid {{ a.bd }};background:{{ a.bg }};border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;text-align:left;color:#0B1F3A">
+          <span style="font-size:26px;font-weight:800;color:{{ a.c }};min-width:32px">{{ a.n }}</span>
+          <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:700">{{ a.t }}</span><span style="font-size:12px;color:#5A6A80">{{ a.s }}</span></span>
+          <span style="font-weight:800;color:{{ a.c }}">→</span>
+        </button>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px">
+      <div style="flex:2 1 480px;min-width:0;background:#fff;border:1px solid #E2E7EE;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font-size:16px;font-weight:800">ჯავშნები · ბოლო 14 დღე</span><span style="font-size:13px;color:#5A6A80">სულ 1 555 · საშ. 111/დღე</span></div>
+        <div style="height:200px;display:flex;align-items:flex-end;gap:6px;border-bottom:1px solid #E2E7EE">
+          <sc-for list="{{ chart }}" as="b" hint-placeholder-count="14">
+            <div style="flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px" title="{{ b.tip }}">
+              <span style="font-size:11px;font-weight:700;color:{{ b.lc }}">{{ b.v }}</span>
+              <div style="width:100%;max-width:28px;height:{{ b.h }};background:{{ b.c }};border-radius:6px 6px 2px 2px"></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:-8px"><sc-for list="{{ chart }}" as="b" hint-placeholder-count="14"><span style="flex:1;text-align:center;font-size:11px;color:#5A6A80">{{ b.d }}</span></sc-for></div>
+      </div>
+      <div style="flex:1 1 280px;background:#fff;border:1px solid #E2E7EE;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px">
+        <span style="font-size:16px;font-weight:800">კატეგორიები · ოქტომბერი</span>
+        <sc-for list="{{ catSplit }}" as="c" hint-placeholder-count="6">
+          <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:13px"><span style="font-weight:600">{{ c.name }}</span><span style="font-weight:700">{{ c.pct }}</span></div><div style="height:8px;border-radius:999px;background:#F0F3F7"><div style="height:100%;width:{{ c.pct }};border-radius:999px;background:{{ c.c }}"></div></div></div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #E2E7EE"><span style="font-size:16px;font-weight:800">ბოლო ჯავშნები</span><button onClick="{{ goBookings }}" style="border:0;background:none;color:#047857;font-size:14px;font-weight:700">ყველა →</button></div>
+      <div style="overflow-x:auto">
+        <sc-for list="{{ recent }}" as="r" hint-placeholder-count="5">
+          <button onClick="{{ r.open }}" style="width:100%;min-width:760px;border:0;border-top:1px solid {{ r.bt }};background:#fff;display:grid;grid-template-columns:110px minmax(0,1.3fr) minmax(0,1.4fr) minmax(0,1fr) 110px 150px;gap:12px;align-items:center;padding:0 20px;min-height:54px;text-align:left;font-size:14px;color:#0B1F3A" style-hover="background:#F8FAFC">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5A6A80">{{ r.id }}</span><span style="font-weight:700">{{ r.customer }}</span><span>{{ r.service }}</span><span style="color:#5A6A80">{{ r.when }}</span><span style="font-weight:700">{{ r.amountL }}</span>
+            <span style="justify-self:start;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;background:{{ r.sbg }};color:{{ r.sfg }};white-space:nowrap">{{ r.statusL }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ vBookings }}">
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <sc-for list="{{ bkFilters }}" as="f" hint-placeholder-count="6">
+        <button onClick="{{ f.pick }}" style="border:1px solid {{ f.bd }};border-radius:999px;background:{{ f.bg }};color:{{ f.fg }};min-height:38px;padding:0 14px;font-size:13px;font-weight:700;display:flex;gap:8px;align-items:center">{{ f.label }}<span style="opacity:.7">{{ f.n }}</span></button>
+      </sc-for>
+    </div>
+    <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;overflow:hidden">
+      <div style="overflow-x:auto">
+        <div style="min-width:1080px;display:grid;grid-template-columns:110px minmax(0,1.2fr) minmax(0,1.3fr) minmax(0,1.2fr) 110px 100px 100px 160px;gap:12px;padding:12px 20px;background:#F8FAFC;border-bottom:1px solid #E2E7EE;font-size:12px;font-weight:700;color:#5A6A80;letter-spacing:.02em">
+          <span>ID</span><span>მომხმარებელი</span><span>სერვისი</span><span>ხელოსანი</span><span>დრო</span><span>უბანი</span><span>თანხა</span><span>სტატუსი</span>
+        </div>
+        <sc-for list="{{ bkRows }}" as="r" hint-placeholder-count="8">
+          <button onClick="{{ r.open }}" style="width:100%;min-width:1080px;border:0;border-top:1px solid {{ r.bt }};background:{{ r.rowBg }};display:grid;grid-template-columns:110px minmax(0,1.2fr) minmax(0,1.3fr) minmax(0,1.2fr) 110px 100px 100px 160px;gap:12px;align-items:center;padding:0 20px;min-height:56px;text-align:left;font-size:14px;color:#0B1F3A" style-hover="background:#F8FAFC">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5A6A80">{{ r.id }}</span>
+            <span style="font-weight:700">{{ r.customer }}</span>
+            <span>{{ r.service }}</span>
+            <span style="color:{{ r.proC }};font-weight:{{ r.proW }}">{{ r.proL }}</span>
+            <span style="color:#5A6A80">{{ r.when }}</span>
+            <span style="color:#5A6A80">{{ r.district }}</span>
+            <span style="font-weight:700">{{ r.amountL }}</span>
+            <span style="justify-self:start;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;background:{{ r.sbg }};color:{{ r.sfg }};white-space:nowrap">{{ r.statusL }}</span>
+          </button>
+        </sc-for>
+        <sc-if value="{{ bkEmpty }}"><div style="padding:40px 20px;text-align:center;font-size:14px;color:#5A6A80">ამ ფილტრით ჯავშანი ვერ მოიძებნა.</div></sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ vPros }}">
+    <div style="display:flex;gap:4px;background:#E2E7EE;border-radius:12px;padding:4px;align-self:flex-start">
+      <sc-for list="{{ proTabs }}" as="t" hint-placeholder-count="2"><button onClick="{{ t.pick }}" style="border:0;border-radius:9px;background:{{ t.bg }};color:#0B1F3A;padding:0 16px;min-height:40px;font-size:14px;font-weight:700;box-shadow:{{ t.sh }}">{{ t.label }}</button></sc-for>
+    </div>
+    <sc-if value="{{ showQueue }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px">
+        <sc-for list="{{ apps }}" as="a" hint-placeholder-count="3">
+          <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;gap:12px;align-items:center">
+              <span style="width:48px;height:48px;border-radius:50%;background:#0B1F3A;color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;flex-shrink:0">{{ a.initials }}</span>
+              <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:800">{{ a.name }}</span><span style="font-size:13px;color:#5A6A80">{{ a.cat }} · {{ a.district }} · {{ a.exp }}</span></span>
+              <span style="font-size:12px;color:#5A6A80;white-space:nowrap">{{ a.applied }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;background:#F8FAFC;border-radius:12px;padding:12px 14px">
+              <sc-for list="{{ a.docs }}" as="d" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:8px;font-size:13px"><span>{{ d.name }}</span><span style="font-weight:700;color:{{ d.c }}">{{ d.state }}</span></div></sc-for>
+            </div>
+            <sc-if value="{{ a.isPending }}">
+              <div style="display:flex;gap:8px">
+                <button onClick="{{ a.approve }}" disabled="{{ a.cantApprove }}" style="flex:1;border:0;border-radius:10px;background:{{ a.apBg }};color:#fff;min-height:44px;font-size:14px;font-weight:700;cursor:{{ a.apCursor }}">დადასტურება</button>
+                <button onClick="{{ a.request }}" style="border:1px solid #CBD3DE;border-radius:10px;background:#fff;color:#0B1F3A;min-height:44px;padding:0 14px;font-size:14px;font-weight:700">დოკ. მოთხოვნა</button>
+                <button onClick="{{ a.reject }}" style="border:0;background:none;color:#B42318;min-height:44px;padding:0 8px;font-size:14px;font-weight:700">უარი</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ a.isDone }}"><div style="border-radius:10px;background:{{ a.doneBg }};color:{{ a.doneFg }};min-height:44px;display:grid;place-items:center;font-size:14px;font-weight:700">{{ a.doneL }}</div></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showProList }}">
+      <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;overflow-x:auto">
+        <div style="min-width:860px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.2fr) 90px 90px 110px 130px;gap:12px;padding:12px 20px;background:#F8FAFC;border-bottom:1px solid #E2E7EE;font-size:12px;font-weight:700;color:#5A6A80"><span>ხელოსანი</span><span>კატეგორია</span><span>რეიტინგი</span><span>სამუშაო</span><span>გაუქმება</span><span>აქტიური</span></div>
+        <sc-for list="{{ proRows }}" as="p" hint-placeholder-count="7">
+          <div style="min-width:860px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.2fr) 90px 90px 110px 130px;gap:12px;align-items:center;padding:0 20px;min-height:58px;border-top:1px solid {{ p.bt }};font-size:14px;opacity:{{ p.op }}">
+            <span style="display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:50%;background:#E7F6EF;color:#047857;display:grid;place-items:center;font-weight:800;font-size:12px">{{ p.initials }}</span><span style="font-weight:700">{{ p.name }}</span></span>
+            <span style="color:#5A6A80">{{ p.cat }}</span>
+            <span style="font-weight:700"><span style="color:#F59E0B">★</span> {{ p.rating }}</span>
+            <span>{{ p.jobs }}</span>
+            <span style="font-weight:700;color:{{ p.cancelC }}">{{ p.cancel }}</span>
+            <button role="switch" aria-label="აქტიური" onClick="{{ p.toggle }}" style="border:0;width:48px;height:28px;border-radius:999px;background:{{ p.tBg }};padding:3px;display:flex;justify-content:{{ p.tJc }};transition:background .2s"><span style="width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2)"></span></button>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ vServices }}">
+    <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;overflow-x:auto">
+      <div style="min-width:820px;display:grid;grid-template-columns:48px minmax(0,1.6fr) minmax(0,1.6fr) 130px 130px 100px 90px;gap:12px;padding:12px 20px;background:#F8FAFC;border-bottom:1px solid #E2E7EE;font-size:12px;font-weight:700;color:#5A6A80"><span></span><span>კატეგორია</span><span>სერვისის სახელი</span><span>საწყისი ფასი, ₾</span><span>საკომისიო, %</span><span>ხელოსნები</span><span>აქტიური</span></div>
+      <sc-for list="{{ svcRows }}" as="s" hint-placeholder-count="6">
+        <div style="min-width:820px;display:grid;grid-template-columns:48px minmax(0,1.6fr) minmax(0,1.6fr) 130px 130px 100px 90px;gap:12px;align-items:center;padding:10px 20px;border-top:1px solid {{ s.bt }};font-size:14px">
+          <span style="width:40px;height:40px;border-radius:10px;background:#E7F6EF;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="{{ s.icon }}"></path></svg></span>
+          <span style="font-weight:700">{{ s.name }}</span>
+          <span style="color:#5A6A80">{{ s.service }}</span>
+          <input value="{{ s.price }}" onChange="{{ s.onPrice }}" inputMode="decimal" style="border:1.5px solid #CBD3DE;border-radius:10px;height:40px;padding:0 12px;font-size:14px;font-weight:700;width:100%;color:#0B1F3A;outline-color:#047857">
+          <input value="{{ s.fee }}" onChange="{{ s.onFee }}" inputMode="decimal" style="border:1.5px solid #CBD3DE;border-radius:10px;height:40px;padding:0 12px;font-size:14px;font-weight:700;width:100%;color:#0B1F3A;outline-color:#047857">
+          <span>{{ s.pros }}</span>
+          <button role="switch" aria-label="აქტიური" onClick="{{ s.toggle }}" style="border:0;width:48px;height:28px;border-radius:999px;background:{{ s.tBg }};padding:3px;display:flex;justify-content:{{ s.tJc }};transition:background .2s"><span style="width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2)"></span></button>
+        </div>
+      </sc-for>
+    </div>
+    <p style="margin:0;font-size:13px;color:#5A6A80">ფასის ცვლილება ვრცელდება მხოლოდ ახალ ჯავშნებზე. გამორთული კატეგორია საიტზე აღარ ჩანს, მაგრამ არსებული ჯავშნები რჩება.</p>
+    <sc-if value="{{ svcDirty }}">
+      <div style="position:sticky;bottom:16px;background:#0B1F3A;color:#fff;border-radius:14px;padding:12px 12px 12px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;box-shadow:0 12px 32px rgba(11,31,58,.25)">
+        <span style="font-size:14px;font-weight:600">შეუნახავი ცვლილებები</span>
+        <span style="display:flex;gap:8px"><button onClick="{{ svcReset }}" style="border:1px solid #2A4470;border-radius:10px;background:transparent;color:#fff;min-height:42px;padding:0 16px;font-size:14px;font-weight:700">გაუქმება</button><button onClick="{{ svcSave }}" style="border:0;border-radius:10px;background:#10B981;color:#0B1F3A;min-height:42px;padding:0 18px;font-size:14px;font-weight:800">შენახვა</button></span>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ vPayments }}">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+      <sc-for list="{{ payKpis }}" as="k" hint-placeholder-count="3">
+        <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600;color:#5A6A80">{{ k.k }}</span><span style="font-size:26px;font-weight:800;letter-spacing:-.02em">{{ k.v }}</span><span style="font-size:12px;color:#5A6A80">{{ k.d }}</span></div>
+      </sc-for>
+    </div>
+    <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;overflow-x:auto">
+      <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #E2E7EE;min-width:720px"><span style="font-size:16px;font-weight:800">ხელოსნების გადარიცხვები · 28 ოქტ – 3 ნოემ</span><button onClick="{{ payAll }}" style="border:0;border-radius:10px;background:#047857;color:#fff;min-height:40px;padding:0 16px;font-size:14px;font-weight:700">ყველას გადარიცხვა</button></div>
+      <sc-for list="{{ payRows }}" as="p" hint-placeholder-count="6">
+        <div style="min-width:720px;display:grid;grid-template-columns:minmax(0,1.6fr) 90px 120px 120px 120px 150px;gap:12px;align-items:center;padding:0 20px;min-height:58px;border-top:1px solid {{ p.bt }};font-size:14px">
+          <span style="font-weight:700">{{ p.pro }}</span><span style="color:#5A6A80">{{ p.jobs }} სამუშაო</span><span>{{ p.grossL }}</span><span style="color:#5A6A80">−{{ p.feeL }}</span><span style="font-weight:800">{{ p.netL }}</span>
+          <sc-if value="{{ p.ready }}"><button onClick="{{ p.pay }}" style="border:1px solid #047857;border-radius:10px;background:#fff;color:#047857;min-height:38px;font-size:13px;font-weight:700">გადარიცხვა</button></sc-if>
+          <sc-if value="{{ p.paid }}"><span style="justify-self:start;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;background:#E7F6EF;color:#047857">გადარიცხულია ✓</span></sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ vDisputes }}">
+    <sc-for list="{{ disputes }}" as="d" hint-placeholder-count="2">
+      <div style="background:#fff;border:1px solid #E2E7EE;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+          <span style="display:flex;flex-direction:column;gap:4px;min-width:0"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5A6A80">{{ d.id }} · <strong style="color:#0B1F3A">{{ d.amountL }}</strong></span><span style="font-size:16px;font-weight:800">{{ d.service }}</span></span>
+          <span style="border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;background:{{ d.sbg }};color:{{ d.sfg }}">{{ d.slaL }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+          <div style="background:#F8FAFC;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:700;color:#5A6A80">მომხმარებელი · {{ d.customer }}</span><span style="font-size:14px;line-height:1.55">{{ d.reason }}</span><span style="font-size:12px;color:#5A6A80">{{ d.photos }}</span></div>
+          <div style="background:#F8FAFC;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:700;color:#5A6A80">ხელოსანი · {{ d.pro }}</span><span style="font-size:14px;line-height:1.55">{{ d.reply }}</span></div>
+        </div>
+        <sc-if value="{{ d.open }}">
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <button onClick="{{ d.revisit }}" style="border:0;border-radius:10px;background:#0B1F3A;color:#fff;min-height:44px;padding:0 16px;font-size:14px;font-weight:700">ხელახალი ვიზიტი (უფასო)</button>
+            <button onClick="{{ d.refund50 }}" style="border:1px solid #CBD3DE;border-radius:10px;background:#fff;color:#0B1F3A;min-height:44px;padding:0 16px;font-size:14px;font-weight:700">50% დაბრუნება</button>
+            <button onClick="{{ d.refund }}" style="border:1px solid #CBD3DE;border-radius:10px;background:#fff;color:#0B1F3A;min-height:44px;padding:0 16px;font-size:14px;font-weight:700">სრული დაბრუნება</button>
+            <button onClick="{{ d.reject }}" style="border:0;background:none;color:#B42318;min-height:44px;padding:0 8px;font-size:14px;font-weight:700">საჩივრის უარყოფა</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ d.closed }}"><div style="border-radius:10px;background:#E7F6EF;color:#047857;min-height:44px;display:flex;align-items:center;padding:0 16px;font-size:14px;font-weight:700">გადაწყვეტილი: {{ d.resolution }}</div></sc-if>
+      </div>
+    </sc-for>
+  </sc-if>
+
+  </main>
+</div>
+
+<sc-if value="{{ drawerOpen }}">
+  <div onClick="{{ closeDrawer }}" style="position:fixed;inset:0;background:rgba(11,31,58,.35);z-index:40"></div>
+  <aside style="position:fixed;top:0;right:0;bottom:0;width:min(460px,100%);background:#fff;z-index:41;display:flex;flex-direction:column;box-shadow:-16px 0 48px rgba(11,31,58,.2)">
+    <div style="padding:18px 22px;border-bottom:1px solid #E2E7EE;display:flex;align-items:center;gap:12px">
+      <span style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5A6A80">{{ dr.id }}</span><span style="font-size:18px;font-weight:800">{{ dr.service }}</span></span>
+      <span style="border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;background:{{ dr.sbg }};color:{{ dr.sfg }}">{{ dr.statusL }}</span>
+      <button aria-label="დახურვა" onClick="{{ closeDrawer }}" style="width:40px;height:40px;border-radius:10px;border:1px solid #E2E7EE;background:#fff;font-size:18px;color:#0B1F3A">×</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:20px">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px">
+        <sc-for list="{{ dr.facts }}" as="f" hint-placeholder-count="6"><div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;font-weight:700;color:#5A6A80">{{ f.k }}</span><span style="font-size:14px;font-weight:600">{{ f.v }}</span></div></sc-for>
+      </div>
+      <div style="background:#F8FAFC;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:14px;font-weight:800">ხელოსანი</span>
+        <sc-if value="{{ dr.hasPro }}"><div style="display:flex;gap:10px;align-items:center"><span style="width:40px;height:40px;border-radius:50%;background:#0B1F3A;color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px">{{ dr.proInitials }}</span><span style="flex:1;font-size:15px;font-weight:700">{{ dr.pro }}</span><button onClick="{{ unassign }}" style="border:0;background:none;color:#047857;font-size:13px;font-weight:700">შეცვლა</button></div></sc-if>
+        <sc-if value="{{ dr.noPro }}">
+          <span style="font-size:13px;color:#92400E;font-weight:600">ჯერ არ არის მინიჭებული — ავტომატური შერჩევა ვერ მოხერხდა 15 წუთში.</span>
+          <div style="display:flex;gap:8px">
+            <select value="{{ assignSel }}" onChange="{{ onAssignSel }}" style="flex:1;min-width:0;border:1.5px solid #CBD3DE;border-radius:10px;height:44px;padding:0 10px;font-size:14px;color:#0B1F3A;background:#fff">
+              <sc-for list="{{ assignOpts }}" as="o" hint-placeholder-count="4"><option value="{{ o.name }}">{{ o.label }}</option></sc-for>
+            </select>
+            <button onClick="{{ assign }}" style="border:0;border-radius:10px;background:#047857;color:#fff;min-height:44px;padding:0 16px;font-size:14px;font-weight:700">მინიჭება</button>
+          </div>
+        </sc-if>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span style="font-size:14px;font-weight:800;margin-bottom:12px">ისტორია</span>
+        <sc-for list="{{ dr.log }}" as="l" hint-placeholder-count="3">
+          <div style="display:flex;gap:12px"><div style="display:flex;flex-direction:column;align-items:center"><span style="width:10px;height:10px;border-radius:50%;background:#047857;margin-top:5px"></span><span style="flex:1;width:2px;background:#E2E7EE;min-height:20px"></span></div><div style="padding-bottom:14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:600">{{ l.t }}</span><span style="font-size:12px;color:#5A6A80">{{ l.at }}</span></div></div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="padding:16px 22px;border-top:1px solid #E2E7EE;display:flex;flex-wrap:wrap;gap:8px">
+      <button style="flex:1 1 140px;border:1px solid #CBD3DE;border-radius:10px;background:#fff;color:#0B1F3A;min-height:44px;font-size:14px;font-weight:700">მიწერა მომხმარებელს</button>
+      <button onClick="{{ refundBooking }}" style="flex:1 1 120px;border:1px solid #CBD3DE;border-radius:10px;background:#fff;color:#0B1F3A;min-height:44px;font-size:14px;font-weight:700">თანხის დაბრუნება</button>
+      <button onClick="{{ cancelBooking }}" style="border:0;background:none;color:#B42318;min-height:44px;padding:0 10px;font-size:14px;font-weight:700">გაუქმება</button>
+    </div>
+  </aside>
+</sc-if>
+
+<sc-if value="{{ toast }}">
+  <div style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0B1F3A;color:#fff;border-radius:12px;padding:12px 18px;font-size:14px;font-weight:600;z-index:60;box-shadow:0 12px 32px rgba(11,31,58,.3);display:flex;gap:10px;align-items:center"><span style="color:#10B981;font-weight:800">✓</span>{{ toast }}</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  ST = { pending: ['ელოდება ხელოსანს', '#FFF7E6', '#92400E'], confirmed: ['დადასტურებული', '#EAF0F8', '#1A3358'], in_progress: ['მიმდინარე', '#E0F2FE', '#075985'], completed: ['დასრულებული', '#E7F6EF', '#047857'], cancelled: ['გაუქმებული', '#F1F3F6', '#5A6A80'], disputed: ['დავა', '#FEF2F2', '#B42318'] };
+  PROS = [['მარიამ ბერიძე', 'მბ', 'დასუფთავება', '4.97', 612, '1%'], ['დავით კაპანაძე', 'დკ', 'ელექტროობა', '4.94', 388, '2%'], ['სანდრო ოქროპირიძე', 'სო', 'ტექნიკის მონტაჟი', '4.92', 251, '1%'], ['სალომე ჩხეიძე', 'სჩ', 'დასუფთავება', '4.90', 204, '3%'], ['ლაშა ღლონტი', 'ლღ', 'მებაღეობა', '4.88', 177, '2%'], ['ზურაბ ნოზაძე', 'ზნ', 'რემონტი', '4.71', 96, '9%'], ['ირაკლი შენგელია', 'იშ', 'მშენებლობა', '4.80', 71, '4%']];
+  state = {
+    view: 'dash', narrow: false, bkFilter: 'all', bkQuery: '', openId: null, assignSel: 'მარიამ ბერიძე', toast: '', proTab: 'queue',
+    bookings: [
+      ['HC-48231', 'ნინო ბერიძე', 'ღრმა დასუფთავება · სტანდარტული', '', 'დღეს 14:00', 'ვაკე', 122.5, 'pending'],
+      ['HC-48230', 'გიორგი რამიშვილი', 'ელექტრო · მონტაჟი', 'დავით კაპანაძე', 'დღეს 12:00', 'საბურთალო', 102.5, 'in_progress'],
+      ['HC-48229', 'ანა კვარაცხელია', 'ბაღის მოვლა · სეზონური', 'ლაშა ღლონტი', 'დღეს 10:00', 'წყნეთი', 102.5, 'completed'],
+      ['HC-48228', 'ლევან მელაძე', 'ტექნიკა · ერთი ერთეული', '', 'ხვალ 16:00', 'დიდუბე', 62.5, 'pending'],
+      ['HC-48227', 'ეკა გელაშვილი', 'რემონტი · ორი ოთახი', 'ზურაბ ნოზაძე', 'ხვალ 09:00', 'ვაკე', 693.5, 'confirmed'],
+      ['HC-48226', 'თამარ ჯაფარიძე', 'ღრმა დასუფთავება · სრული', 'მარიამ ბერიძე', 'დღეს 08:00', 'ისანი', 172.5, 'disputed'],
+      ['HC-48225', 'დათო ხარაიშვილი', 'მშენებლობა · შეფასება', 'ირაკლი შენგელია', '6 ნოემ', 'გლდანი', 92.5, 'completed'],
+      ['HC-48224', 'სოფო ლომიძე', 'ელექტრო · გამოძახება', '', 'ხვალ 12:00', 'ნაძალადევი', 72.5, 'pending'],
+      ['HC-48223', 'ნიკა წიკლაური', 'ბაღის მოვლა · გაზონი', 'ლაშა ღლონტი', '5 ნოემ', 'დიღომი', 62.5, 'cancelled'],
+      ['HC-48222', 'მაკა ბერიძე', 'ღრმა დასუფთავება · სტანდარტული', 'სალომე ჩხეიძე', 'შაბ 10:00', 'მთაწმინდა', 122.5, 'confirmed']
+    ].map(([id, customer, service, pro, when, district, amount, status]) => ({ id, customer, service, pro, when, district, amount, status })),
+    apps: [
+      { name: 'გიორგი ბაქრაძე', initials: 'გბ', cat: 'ელექტროობა', district: 'საბურთალო', exp: '7 წ. გამოცდ.', applied: '2 სთ წინ', docs: [['პირადობა', 1], ['ნასამართლობის ცნობა', 1], ['ელექტრიკოსის სერტიფიკატი', 0]], st: 'pending' },
+      { name: 'ქეთი მამულაშვილი', initials: 'ქმ', cat: 'დასუფთავება', district: 'ვაკე', exp: '3 წ. გამოცდ.', applied: '5 სთ წინ', docs: [['პირადობა', 1], ['ნასამართლობის ცნობა', 1], ['საცდელი დავალება', 1]], st: 'pending' },
+      { name: 'ვახტანგ თოდუა', initials: 'ვთ', cat: 'ტექნიკის მონტაჟი', district: 'გლდანი', exp: '5 წ. გამოცდ.', applied: 'გუშინ', docs: [['პირადობა', 1], ['ნასამართლობის ცნობა', 0], ['დაზღვევა', 1]], st: 'pending' }
+    ],
+    proActive: [true, true, true, true, true, false, true],
+    svc: null, svcSaved: null,
+    payouts: [['მარიამ ბერიძე', 14, 1716], ['დავით კაპანაძე', 9, 902], ['სალომე ჩხეიძე', 11, 1254], ['ლაშა ღლონტი', 7, 588], ['სანდრო ოქროპირიძე', 8, 512], ['ზურაბ ნოზაძე', 2, 1380]].map(([pro, jobs, gross]) => ({ pro, jobs, gross, paid: false })),
+    disputes: [
+      { id: 'HC-48226', service: 'ღრმა დასუფთავება · სრული', amount: 172.5, customer: 'თამარ ჯაფარიძე', pro: 'მარიამ ბერიძე', reason: 'ღუმელი და ფანჯრები არ გაიწმინდა, თუმცა „სრული“ პაკეტი იყო შეკვეთილი.', photos: '3 ფოტო მიმაგრებულია', reply: 'ღუმელის საწმენდი საშუალება ადგილზე არ იყო, მომხმარებელს შევთავაზე ხვალ მოსვლა.', sla: '21 სთ დარჩა', urgent: false, res: '' },
+      { id: 'HC-48190', service: 'ინტერიერის რემონტი · ერთი ოთახი', amount: 323.5, customer: 'ბექა ცინცაძე', pro: 'ზურაბ ნოზაძე', reason: 'ჭერზე ლაქები დარჩა, ხელოსანი გამოსასწორებლად აღარ მოსულა.', photos: '5 ფოტო მიმაგრებულია', reply: 'პასუხი ჯერ არ არის — შეხსენება გაეგზავნა 2-ჯერ.', sla: '6 სთ დარჩა', urgent: true, res: '' }
+    ]
+  };
+  SVC0 = [['სახლის დასუფთავება', 'ღრმა დასუფთავება', 49, 15, 2140, 'M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z'], ['მებაღეობა', 'ბაღის მოვლა', 39, 15, 980, 'M12 21V11M12 11C12 7 9 4 4 4c0 4 3 7 8 7zM12 13c0-3 2.5-6 7-6 0 4-3 6-7 6z'], ['რემონტი', 'ინტერიერის რემონტი', 320, 12, 410, 'M4 4h13v5H4zM17 6.5h3V12h-8v3M11 15h2v6h-2z'], ['მშენებლობა', 'სამშენებლო სამუშაოები', 89, 10, 260, 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6'], ['ელექტროობა', 'ელექტრო სამუშაოები', 69, 15, 730, 'M13 2L4 14h7l-1 8 9-12h-7z'], ['ტექნიკის მონტაჟი', 'ტექნიკის მონტაჟი', 59, 15, 520, 'M5 3h14v18H5zM5 7h14M12 15m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0']].map(([name, service, price, fee, pros, icon]) => ({ name, service, price: String(price), fee: String(fee), pros, icon, active: true }));
+
+  ro = new ResizeObserver(e => { const n = e[0].contentRect.width < 900; if (n !== this.state.narrow) this.setState({ narrow: n }); });
+  rootRef = el => { if (el && el !== this.root) { this.root = el; this.ro.observe(el); } };
+  componentWillUnmount() { this.ro.disconnect(); clearTimeout(this.tt); }
+  flash(msg) { clearTimeout(this.tt); this.setState({ toast: msg }); this.tt = setTimeout(() => this.setState({ toast: '' }), 2400); }
+  go(view, extra) { this.setState({ view, openId: null, ...(extra || {}) }); window.scrollTo(0, 0); }
+  updBooking(id, patch) { this.setState(s => ({ bookings: s.bookings.map(b => b.id === id ? { ...b, ...patch } : b) })); }
+
+  renderVals() {
+    const s = this.state, G = '#047857';
+    const fmt = n => n.toLocaleString('en-US', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }).replace(/,/g, ' ') + ' ₾';
+    const svc = s.svc || this.SVC0;
+    const pendingN = s.bookings.filter(b => b.status === 'pending').length;
+    const appsN = s.apps.filter(a => a.st === 'pending').length;
+    const dispN = s.disputes.filter(d => !d.res).length;
+    const readyPay = s.payouts.filter(p => !p.paid);
+    const decor = b => { const [l, bg, fg] = this.ST[b.status]; return { ...b, statusL: l, sbg: bg, sfg: fg, amountL: fmt(b.amount), open: () => this.setState({ openId: b.id, assignSel: this.PROS[0][0] }) }; };
+    const NAV = [
+      ['dash', 'მიმოხილვა', 'M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z', 0, ''],
+      ['bookings', 'ჯავშნები', 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4', pendingN, '#FBBF24'],
+      ['pros', 'ხელოსნები', 'M9 11a4 4 0 100-8 4 4 0 000 8zM2 21c0-4 3-6 7-6s7 2 7 6M17 11l2 2 4-4', appsN, '#10B981'],
+      ['services', 'სერვისები და ფასები', 'M3 12V4h8l10 10-8 8zM7.5 7.5h.01', 0, ''],
+      ['payments', 'გადახდები', 'M3 6h18v12H3zM3 10h18M7 15h4', readyPay.length, '#9FB0C8'],
+      ['disputes', 'დავები', 'M12 3l9 16H3zM12 10v4M12 17h.01', dispN, '#F87171']
+    ];
+    const TITLES = { dash: ['მიმოხილვა', 'პარასკევი, 6 ნოემბერი · თბილისი'], bookings: ['ჯავშნები', 'ყველა ჯავშანი რეალურ დროში'], pros: ['ხელოსნები', 'ვერიფიკაცია და აქტიური ხელოსნები'], services: ['სერვისები და ფასები', 'კატეგორიების საწყისი ფასი და საკომისიო'], payments: ['გადახდები', 'დაბლოკილი თანხები და ხელოსნების გადარიცხვები'], disputes: ['დავები', 'პასუხი 24 საათში — SLA'] };
+    const q = s.bkQuery.trim().toLowerCase();
+    const filtered = s.bookings.filter(b => (s.bkFilter === 'all' || b.status === s.bkFilter) && (!q || (b.id + ' ' + b.customer + ' ' + b.pro + ' ' + b.service).toLowerCase().includes(q)));
+    const chartV = [86, 92, 78, 104, 111, 97, 123, 118, 102, 131, 140, 126, 119, 128], max = 140;
+    const chartD = [24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6];
+    const ob = s.bookings.find(b => b.id === s.openId);
+    const dr = ob ? (() => { const d = decor(ob), p = this.PROS.find(x => x[0] === ob.pro); return { ...d, hasPro: !!ob.pro, noPro: !ob.pro, proInitials: p ? p[1] : '', facts: [{ k: 'მომხმარებელი', v: ob.customer }, { k: 'ტელეფონი', v: '+995 599 •• •• 21' }, { k: 'დრო', v: ob.when }, { k: 'უბანი', v: ob.district }, { k: 'თანხა', v: fmt(ob.amount) }, { k: 'გადახდა', v: ob.status === 'cancelled' ? 'დაბრუნებულია' : ob.status === 'completed' ? 'ჩამოჭრილია' : 'დაბლოკილია' }], log: [{ t: 'ჯავშანი შეიქმნა', at: 'დღეს 09:12 · ვებ' }, { t: 'თანხა დაიბლოკა ბარათზე', at: 'დღეს 09:12' }, ...(ob.pro ? [{ t: 'მიენიჭა: ' + ob.pro, at: 'დღეს 09:20' }] : []), ...(ob.status === 'disputed' ? [{ t: 'მომხმარებელმა გახსნა დავა', at: 'დღეს 13:05' }] : [])] }; })() : {};
+    const svcChanged = JSON.stringify(svc) !== JSON.stringify(s.svcSaved || this.SVC0);
+    const setSvc = (i, patch) => this.setState(st => ({ svc: (st.svc || this.SVC0).map((x, j) => j === i ? { ...x, ...patch } : x) }));
+    const feeTotal = s.payouts.reduce((a, p) => a + p.gross * 0.15, 0);
+
+    return {
+      rootRef: this.rootRef, narrow: s.narrow, wide: !s.narrow, rootDir: s.narrow ? 'column' : 'row', headerTop: s.narrow ? '112px' : '0',
+      nav: NAV.map(([id, label, icon, badge, badgeBg]) => ({ label, icon, badge: badge || '', badgeBg, bg: s.view === id ? (s.narrow ? '#fff' : '#1F3A66') : 'transparent', fg: s.view === id ? (s.narrow ? '#0B1F3A' : '#fff') : '#C9D4E3', go: () => this.go(id) })),
+      title: TITLES[s.view][0], subtitle: TITLES[s.view][1],
+      bkQuery: s.bkQuery, onGlobalSearch: e => this.setState({ bkQuery: e.target.value, view: 'bookings' }),
+      vDash: s.view === 'dash', vBookings: s.view === 'bookings', vPros: s.view === 'pros', vServices: s.view === 'services', vPayments: s.view === 'payments', vDisputes: s.view === 'disputes',
+      goBookings: () => this.go('bookings'),
+      kpis: [{ k: 'ჯავშნები დღეს', v: '128', d: '▲ 8% გუშინდელთან', c: G }, { k: 'შემოსავალი დღეს', v: '9 840 ₾', d: '▲ 12% გუშინდელთან', c: G }, { k: 'აქტიური ხელოსნები', v: '1 214', d: '86 ახლა სამუშაოზე', c: '#5A6A80' }, { k: 'საშუალო შეფასება', v: '4.86', d: '▼ 0.02 ბოლო 30 დღეში', c: '#B42318' }],
+      attention: [
+        { n: pendingN, t: 'ჯავშანი ხელოსნის გარეშე', s: 'ავტომატური შერჩევა ვერ მოხერხდა', c: '#92400E', bg: '#FFFBEB', bd: '#FDE68A', go: () => this.go('bookings', { bkFilter: 'pending' }) },
+        { n: appsN, t: 'ახალი ხელოსნის განაცხადი', s: 'ელოდება ვერიფიკაციას', c: G, bg: '#F0FAF5', bd: '#BBE5D0', go: () => this.go('pros', { proTab: 'queue' }) },
+        { n: dispN, t: 'ღია დავა', s: '1 ვადა იწურება 6 სთ-ში', c: '#B42318', bg: '#FEF2F2', bd: '#FECACA', go: () => this.go('disputes') }
+      ],
+      chart: chartV.map((v, i) => ({ v, d: chartD[i], h: Math.round(v / max * 82) + '%', c: i === chartV.length - 1 ? G : '#C7D2E0', lc: i === chartV.length - 1 ? G : '#9AA8BA', tip: v + ' ჯავშანი' })),
+      catSplit: [['დასუფთავება', 42], ['ელექტროობა', 18], ['მებაღეობა', 14], ['ტექნიკის მონტაჟი', 12], ['რემონტი', 9], ['მშენებლობა', 5]].map(([name, p], i) => ({ name, pct: p + '%', c: i ? '#0B1F3A' : G })),
+      recent: s.bookings.slice(0, 5).map((b, i) => ({ ...decor(b), bt: i ? '#E2E7EE' : 'transparent' })),
+      bkFilters: [['all', 'ყველა'], ['pending', 'ელოდება'], ['confirmed', 'დადასტურებული'], ['in_progress', 'მიმდინარე'], ['completed', 'დასრულებული'], ['disputed', 'დავა'], ['cancelled', 'გაუქმებული']].map(([id, label]) => { const on = s.bkFilter === id; return { label, n: id === 'all' ? s.bookings.length : s.bookings.filter(b => b.status === id).length, bg: on ? '#0B1F3A' : '#fff', fg: on ? '#fff' : '#0B1F3A', bd: on ? '#0B1F3A' : '#E2E7EE', pick: () => this.setState({ bkFilter: id }) }; }),
+      bkRows: filtered.map((b, i) => ({ ...decor(b), bt: i ? '#E2E7EE' : 'transparent', rowBg: b.status === 'pending' ? '#FFFDF7' : '#fff', proL: b.pro || 'არ არის მინიჭებული', proC: b.pro ? '#0B1F3A' : '#92400E', proW: b.pro ? '500' : '700' })),
+      bkEmpty: filtered.length === 0,
+      proTabs: [['queue', 'ვერიფიკაცია (' + appsN + ')'], ['list', 'ყველა ხელოსანი']].map(([id, label]) => ({ label, bg: s.proTab === id ? '#fff' : 'transparent', sh: s.proTab === id ? '0 1px 3px rgba(11,31,58,.12)' : 'none', pick: () => this.setState({ proTab: id }) })),
+      showQueue: s.proTab === 'queue', showProList: s.proTab === 'list',
+      apps: s.apps.map((a, i) => { const ok = a.docs.every(d => d[1]); const set = st => { this.setState(x => ({ apps: x.apps.map((y, j) => j === i ? { ...y, st } : y) })); this.flash(a.name + ' — ' + (st === 'approved' ? 'დადასტურებულია' : st === 'rejected' ? 'უარყოფილია' : 'დოკუმენტი მოთხოვნილია')); }; return { ...a, docs: a.docs.map(([name, v]) => ({ name, state: v ? '✓ შემოწმებულია' : 'აკლია', c: v ? G : '#B42318' })), isPending: a.st === 'pending', isDone: a.st !== 'pending', cantApprove: !ok, apBg: ok ? G : '#9AA8BA', apCursor: ok ? 'pointer' : 'not-allowed', approve: () => ok && set('approved'), reject: () => set('rejected'), request: () => this.flash(a.name + '-ს გაეგზავნა დოკუმენტის მოთხოვნა'), doneL: a.st === 'approved' ? '✓ დადასტურებულია — პროფილი აქტიურია' : 'უარყოფილია', doneBg: a.st === 'approved' ? '#E7F6EF' : '#F1F3F6', doneFg: a.st === 'approved' ? G : '#5A6A80' }; }),
+      proRows: this.PROS.map(([name, initials, cat, rating, jobs, cancel], i) => { const on = s.proActive[i]; return { name, initials, cat, rating, jobs, cancel, cancelC: parseInt(cancel) > 5 ? '#B42318' : '#0B1F3A', bt: i ? '#E2E7EE' : 'transparent', op: on ? 1 : .55, tBg: on ? G : '#CBD3DE', tJc: on ? 'flex-end' : 'flex-start', toggle: () => { this.setState({ proActive: s.proActive.map((v, j) => j === i ? !v : v) }); this.flash(name + (on ? ' — შეჩერებულია' : ' — გააქტიურდა')); } }; }),
+      svcRows: svc.map((x, i) => ({ ...x, bt: i ? '#E2E7EE' : 'transparent', tBg: x.active ? G : '#CBD3DE', tJc: x.active ? 'flex-end' : 'flex-start', onPrice: e => setSvc(i, { price: e.target.value.replace(/[^0-9.]/g, '') }), onFee: e => setSvc(i, { fee: e.target.value.replace(/[^0-9.]/g, '') }), toggle: () => setSvc(i, { active: !x.active }) })),
+      svcDirty: svcChanged, svcReset: () => this.setState(st => ({ svc: st.svcSaved })), svcSave: () => { this.setState({ svcSaved: svc }); this.flash('ფასები განახლდა'); },
+      payKpis: [{ k: 'დაბლოკილი თანხა', v: '18 420 ₾', d: '146 აქტიური ჯავშანი' }, { k: 'გადასარიცხი', v: fmt(Math.round(readyPay.reduce((a, p) => a + p.gross * 0.85, 0))), d: readyPay.length + ' ხელოსანი' }, { k: 'საკომისიო · კვირა', v: fmt(Math.round(feeTotal)), d: 'საშუალოდ 15%' }],
+      payRows: s.payouts.map((p, i) => ({ ...p, bt: i ? '#E2E7EE' : 'transparent', grossL: fmt(p.gross), feeL: fmt(Math.round(p.gross * 0.15)), netL: fmt(Math.round(p.gross * 0.85)), ready: !p.paid, paid: p.paid, pay: () => { this.setState({ payouts: s.payouts.map((x, j) => j === i ? { ...x, paid: true } : x) }); this.flash(p.pro + '-ს გადაერიცხა ' + fmt(Math.round(p.gross * 0.85))); } })),
+      payAll: () => { this.setState({ payouts: s.payouts.map(x => ({ ...x, paid: true })) }); this.flash('ყველა გადარიცხვა გაიგზავნა'); },
+      disputes: s.disputes.map((d, i) => { const resolve = res => { this.setState({ disputes: s.disputes.map((x, j) => j === i ? { ...x, res } : x) }); if (d.id === 'HC-48226') this.updBooking(d.id, { status: 'completed' }); this.flash(d.id + ' — ' + res); }; return { ...d, amountL: fmt(d.amount), open: !d.res, closed: !!d.res, resolution: d.res, slaL: d.res ? 'დახურული' : d.sla, sbg: d.res ? '#F1F3F6' : d.urgent ? '#FEF2F2' : '#FFF7E6', sfg: d.res ? '#5A6A80' : d.urgent ? '#B42318' : '#92400E', revisit: () => resolve('ხელახალი ვიზიტი დაინიშნა'), refund50: () => resolve('50% დაბრუნდა · ' + fmt(d.amount / 2)), refund: () => resolve('სრულად დაბრუნდა · ' + fmt(d.amount)), reject: () => resolve('საჩივარი უარყოფილია') }; }),
+      drawerOpen: !!ob, dr, closeDrawer: () => this.setState({ openId: null }),
+      assignSel: s.assignSel, onAssignSel: e => this.setState({ assignSel: e.target.value }),
+      assignOpts: this.PROS.map(p => ({ name: p[0], label: `${p[0]} · ${p[2]} · ★ ${p[3]}` })),
+      assign: () => { this.updBooking(ob.id, { pro: s.assignSel, status: 'confirmed' }); this.flash(ob.id + ' მიენიჭა: ' + s.assignSel); },
+      unassign: () => this.updBooking(ob.id, { pro: '', status: 'pending' }),
+      refundBooking: () => { this.updBooking(ob.id, { status: 'cancelled' }); this.flash(ob.id + ' — თანხა დაბრუნდა'); },
+      cancelBooking: () => { this.updBooking(ob.id, { status: 'cancelled' }); this.setState({ openId: null }); this.flash(ob.id + ' გაუქმდა'); },
+      toast: s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

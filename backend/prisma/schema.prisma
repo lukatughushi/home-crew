@@ -1,0 +1,317 @@
+// HomeCrew database schema — https://pris.ly/d/prisma-schema
+// After changing this file: npm run db:migrate -- --name <what-changed>
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Admin accounts ──────────────────────────────────────────────
+
+model Admin {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  name         String
+  /// Shown under the name in the sidebar, e.g. "ოპერაციების მენეჯერი"
+  title        String    @default("")
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  lastLoginAt  DateTime?
+}
+
+// ─── Website customers ───────────────────────────────────────────
+
+model Customer {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  name         String
+  phone        String    @default("")
+  passwordHash String
+  /// Test wallet — bookings are paid from here until a real payment provider is connected
+  balance      Decimal   @default(0) @db.Decimal(10, 2)
+  createdAt    DateTime  @default(now())
+  lastLoginAt  DateTime?
+
+  bookings     Booking[]
+  transactions WalletTransaction[]
+}
+
+enum WalletTransactionType {
+  /// Test money added (on sign-up or with the "add test money" button)
+  TOPUP
+  /// Booking paid (amount is negative)
+  PAYMENT
+  /// Money returned for a cancelled or refunded booking
+  REFUND
+}
+
+/// Every change to a customer's balance. amount > 0 adds money, < 0 takes it.
+model WalletTransaction {
+  id         Int                   @id @default(autoincrement())
+  customerId Int
+  bookingId  Int?
+  type       WalletTransactionType
+  amount     Decimal               @db.Decimal(10, 2)
+  note       String                @default("")
+  createdAt  DateTime              @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  booking  Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+
+  @@index([customerId, createdAt])
+  @@index([bookingId])
+}
+
+// ─── Catalogue ───────────────────────────────────────────────────
+
+model Service {
+  /// URL slug, e.g. "cleaning" → /services/cleaning
+  id                String    @id
+  name              String    // category name, e.g. "სახლის დასუფთავება"
+  service           String    // page title, e.g. "სახლის ღრმა დასუფთავება"
+  keywords          String    @default("")
+  description       String    @default("")
+  /// Alt text for the photo, e.g. "სუფთა სამზარეულო"
+  photo             String    @default("")
+  /// Uploaded in admin → სურათები, e.g. "/uploads/3f2c….jpg"; empty = no photo yet
+  photoUrl          String    @default("")
+  /// SVG path data for a 24×24 viewBox
+  icon              String    @default("")
+  included          String[]
+  excluded          String[]
+  /// "X ₾-დან" on the website (edited in admin → სერვისები და ფასები)
+  priceFrom         Decimal   @default(0) @db.Decimal(10, 2)
+  /// Platform commission taken from the pro's payout, in percent
+  commissionPercent Decimal   @default(15) @db.Decimal(5, 2)
+  /// Shown on the site only when true
+  isActive          Boolean   @default(true)
+  sortOrder         Int       @default(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  packages Package[]
+  pros     Pro[]
+  bookings Booking[]
+}
+
+model Package {
+  id          Int      @id @default(autoincrement())
+  serviceId   String
+  name        String
+  description String   @default("")
+  price       Decimal  @db.Decimal(10, 2)
+  isPopular   Boolean  @default(false)
+  sortOrder   Int      @default(0)
+
+  service  Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+
+  @@index([serviceId])
+}
+
+// ─── Pros (ხელოსნები) ────────────────────────────────────────────
+
+enum ProStatus {
+  /// Applied, waiting for document verification
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Pro {
+  id              Int       @id @default(autoincrement())
+  name            String
+  phone           String    @default("")
+  email           String    @default("")
+  district        String    @default("")
+  experienceYears Int       @default(0)
+  tag             String    @default("") // e.g. "სწრაფი პასუხი"
+  status          ProStatus @default(PENDING)
+  /// Admin on/off switch for approved pros (suspended pros get no new jobs)
+  isActive        Boolean   @default(true)
+  docsRequestedAt DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  services  Service[]
+  documents ProDocument[]
+  bookings  Booking[]
+  payouts   Payout[]
+
+  @@index([status])
+}
+
+model ProDocument {
+  id         Int     @id @default(autoincrement())
+  proId      Int
+  name       String  // e.g. "პირადობა", "ნასამართლობის ცნობა"
+  isVerified Boolean @default(false)
+
+  pro Pro @relation(fields: [proId], references: [id], onDelete: Cascade)
+
+  @@index([proId])
+}
+
+// ─── Bookings ────────────────────────────────────────────────────
+
+enum BookingStatus {
+  /// No pro assigned yet
+  PENDING
+  CONFIRMED
+  ON_THE_WAY
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  /// Customer opened a dispute
+  DISPUTED
+}
+
+enum PropertyType {
+  HOUSE
+  APARTMENT
+  OFFICE
+}
+
+model Booking {
+  id                Int           @id @default(autoincrement())
+  /// Public reference shown to the customer, e.g. "HC-48219"
+  code              String        @unique
+  status            BookingStatus @default(PENDING)
+
+  serviceId         String
+  packageId         Int?
+  proId             Int?
+  payoutId          Int?
+  /// Website account that booked it (null for bookings made before accounts existed)
+  customerId        Int?
+
+  customerName      String
+  customerPhone     String
+  customerEmail     String        @default("")
+  address           String
+  district          String        @default("")
+  propertyType      PropertyType  @default(APARTMENT)
+  notes             String        @default("")
+
+  /// Day of the visit (time part ignored)
+  date              DateTime      @db.Date
+  /// Arrival window, e.g. "10–12"
+  slot              String
+
+  /// Snapshots taken at booking time — later price/commission edits don't change old bookings
+  price             Decimal       @db.Decimal(10, 2)
+  fee               Decimal       @db.Decimal(10, 2)
+  commissionPercent Decimal       @db.Decimal(5, 2)
+  refundedAmount    Decimal       @default(0) @db.Decimal(10, 2)
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  service Service        @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  package Package?       @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  pro     Pro?           @relation(fields: [proId], references: [id], onDelete: SetNull)
+  payout  Payout?        @relation(fields: [payoutId], references: [id], onDelete: SetNull)
+  customer Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  review  Review?
+  dispute Dispute?
+  events  BookingEvent[]
+  walletTransactions WalletTransaction[]
+
+  @@index([customerId])
+  @@index([status])
+  @@index([date])
+  @@index([createdAt])
+  @@index([proId, status])
+}
+
+/// Timeline shown in the admin booking drawer ("ისტორია")
+model BookingEvent {
+  id        Int      @id @default(autoincrement())
+  bookingId Int
+  message   String
+  createdAt DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId])
+}
+
+// ─── Disputes (დავები) ───────────────────────────────────────────
+
+enum DisputeResolution {
+  REVISIT
+  REFUND_HALF
+  REFUND_FULL
+  REJECTED
+}
+
+model Dispute {
+  id          Int                @id @default(autoincrement())
+  bookingId   Int                @unique
+  reason      String
+  photos      Int                @default(0)
+  /// Empty until the pro replies
+  proReply    String             @default("")
+  /// Must be resolved before this moment (24h SLA)
+  deadline    DateTime
+  resolution  DisputeResolution?
+  resolvedAt  DateTime?
+  createdAt   DateTime           @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([resolvedAt])
+}
+
+// ─── Payouts to pros (გადარიცხვები) ──────────────────────────────
+
+model Payout {
+  id          Int      @id @default(autoincrement())
+  proId       Int
+  jobs        Int
+  gross       Decimal  @db.Decimal(10, 2)
+  commission  Decimal  @db.Decimal(10, 2)
+  net         Decimal  @db.Decimal(10, 2)
+  periodStart DateTime @db.Date
+  periodEnd   DateTime @db.Date
+  /// Marked paid by an admin. No bank integration yet — the transfer itself happens outside the app.
+  paidAt      DateTime @default(now())
+
+  pro      Pro       @relation(fields: [proId], references: [id], onDelete: Restrict)
+  bookings Booking[]
+
+  @@index([proId])
+  @@index([paidAt])
+}
+
+// ─── Reviews (homepage testimonials + job ratings) ───────────────
+
+model Review {
+  id          Int      @id @default(autoincrement())
+  authorName  String   // e.g. "ნინო ს."
+  meta        String   @default("") // e.g. "ღრმა დასუფთავება · ვაკე"
+  quote       String
+  rating      Int      @default(5)
+  /// Shown on the homepage only when true
+  isPublished Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  bookingId   Int?     @unique
+  createdAt   DateTime @default(now())
+
+  booking Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+}
+
+// ─── Homepage slider (admin → სურათები) ──────────────────────────
+
+/// One photo in the homepage hero slider, shown in sortOrder
+model HeroSlide {
+  id        Int      @id @default(autoincrement())
+  /// e.g. "/uploads/3f2c….jpg"
+  url       String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
